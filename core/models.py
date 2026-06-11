@@ -1,5 +1,15 @@
 from django.db import models
 
+class Category(models.Model):
+    name = models.CharField(max_length=25)
+    slug = models.SlugField(unique=True)
+
+    def __str__(self):
+        return self.slug
+    
+    class Meta:
+        ordering = ['name']
+
 class Task(models.Model):
     STATUS_CHOICES = [
         ('todo', 'Todo'),
@@ -10,10 +20,10 @@ class Task(models.Model):
     title = models.CharField(max_length=50)
     description = models.TextField(blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='todo')
-    category = models.CharField(max_length=20)
     due_date = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.title
