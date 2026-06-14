@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Task, Category
+import django_filters
 
 class TaskSerializer(serializers.ModelSerializer):
     category = serializers.CharField(
@@ -31,3 +32,12 @@ class TaskSerializer(serializers.ModelSerializer):
         else:
             representation['category'] = None
         return representation
+    
+class TaskFilter(django_filters.FilterSet):
+    category = django_filters.CharFilter(
+        field_name='category__name',
+        lookup_expr='iexact'
+    )
+    class Meta:
+        model = Task
+        fields = ['status', 'category']
