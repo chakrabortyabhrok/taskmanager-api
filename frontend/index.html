@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', system_ui, sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="max-w-6xl mx-auto p-6">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800">Task Manager</h1>
+                <p class="text-gray-600">Your deployed Django + DRF API</p>
+            </div>
+            <button onclick="showCreateModal()" 
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg flex items-center gap-2">
+                <i class="fas fa-plus"></i>
+                <span>New Task</span>
+            </button>
+        </div>
+
+        <!-- Filters -->
+        <div class="bg-white p-4 rounded-xl shadow-sm mb-6 flex flex-wrap gap-4 items-end">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <select id="statusFilter" onchange="filterTasks()" 
+                        class="border border-gray-300 rounded-lg px-3 py-2 w-40">
+                    <option value="">All Status</option>
+                    <option value="todo">Todo</option>
+                    <option value="in_progress">In Progress</option>
+                    <option value="done">Done</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                <input type="text" id="categoryFilter" placeholder="Category name" 
+                       onkeyup="filterTasks()" 
+                       class="border border-gray-300 rounded-lg px-3 py-2 w-48">
+            </div>
+            <button onclick="loadTasks()" 
+                    class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg flex items-center gap-2">
+                <i class="fas fa-sync-alt"></i>
+                <span>Refresh</span>
+            </button>
+        </div>
+
+        <!-- Tasks List -->
+        <div id="tasksContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Tasks will be loaded here via JavaScript -->
+        </div>
+    </div>
+
+    <!-- Create Task Modal -->
+    <div id="createModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-md">
+            <h2 class="text-xl font-semibold mb-4">Create New Task</h2>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Title</label>
+                    <input type="text" id="title" class="w-full border rounded-lg px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Description</label>
+                    <textarea id="description" rows="3" class="w-full border rounded-lg px-3 py-2"></textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Status</label>
+                        <select id="status" class="w-full border rounded-lg px-3 py-2">
+                            <option value="todo">Todo</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="done">Done</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Category</label>
+                        <input type="text" id="category" placeholder="e.g. Work" class="w-full border rounded-lg px-3 py-2">
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3 mt-6">
+                <button onclick="hideCreateModal()" 
+                        class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancel</button>
+                <button onclick="createTask()" 
+                        class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700">Create Task</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = "https://taskmanager-api-d57o.onrender.com/api";
+
+        // Load all tasks
+        async function loadTasks() {
+            const container = document.getElementById('tasksContainer');
+            container.innerHTML = `<div class="col-span-3 text-center py-8 text-gray-500">Loading tasks...</div>`;
+
+            try {
+                const res = await fetch(`${API_BASE}/tasks/`);
+                const data = await res.json();
+                renderTasks(data.results || data);
+            } catch (error) {
+                container.innerHTML = `<div class="col-span-3 text-red-500 text-center">Failed to load tasks</div>`;
+            }
+        }
+
+        // Render tasks
+        function renderTasks(tasks) {
+            const container = document.getElementById('tasksContainer');
+            container.innerHTML = '';
+
+            if (tasks.length === 0) {
+                container.innerHTML = `<div class="col-span-3 text-center py-8 text-gray-500">No tasks found</div>`;
+                return;
+            }
+
+            tasks.forEach(task => {
+                const card = document.createElement('div');
+                card.className = `bg-white rounded-2xl shadow p-5 border-l-4 ${getStatusColor(task.status)}`;
+                
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-semibold text-lg">${task.title}</h3>
+                            <p class="text-gray-600 text-sm mt-1">${task.description || 'No description'}</p>
+                        </div>
+                        <span class="px-3 py-1 text-xs font-medium rounded-full ${getStatusBadge(task.status)}">
+                            ${task.status}
+                        </span>
+                    </div>
+                    
+                    <div class="mt-4 flex items-center justify-between text-sm">
+                        <div>
+                            <span class="text-gray-500">Category:</span> 
+                            <span class="font-medium">${task.category || 'None'}</span>
+                        </div>
+                        <div class="text-gray-400 text-xs">
+                            ${task.due_date ? new Date(task.due_date).toLocaleDateString() : ''}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function getStatusColor(status) {
+            if (status === 'done') return 'border-green-500';
+            if (status === 'in_progress') return 'border-yellow-500';
+            return 'border-blue-500';
+        }
+
+        function getStatusBadge(status) {
+            if (status === 'done') return 'bg-green-100 text-green-700';
+            if (status === 'in_progress') return 'bg-yellow-100 text-yellow-700';
+            return 'bg-blue-100 text-blue-700';
+        }
+
+        // Filter tasks
+        function filterTasks() {
+            const status = document.getElementById('statusFilter').value;
+            const category = document.getElementById('categoryFilter').value.toLowerCase();
+
+            loadTasks().then(() => {
+                // Simple frontend filtering
+                const cards = document.querySelectorAll('#tasksContainer > div');
+                cards.forEach(card => {
+                    const statusText = card.querySelector('.px-3').innerText.toLowerCase();
+                    const categoryText = card.innerText.toLowerCase();
+                    
+                    const statusMatch = !status || statusText.includes(status);
+                    const categoryMatch = !category || categoryText.includes(category);
+                    
+                    card.style.display = (statusMatch && categoryMatch) ? 'block' : 'none';
+                });
+            });
+        }
+
+        // Show create modal
+        function showCreateModal() {
+            document.getElementById('createModal').classList.remove('hidden');
+            document.getElementById('createModal').classList.add('flex');
+        }
+
+        function hideCreateModal() {
+            document.getElementById('createModal').classList.remove('flex');
+            document.getElementById('createModal').classList.add('hidden');
+        }
+
+        // Create new task
+        async function createTask() {
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            const status = document.getElementById('status').value;
+            const category = document.getElementById('category').value;
+
+            if (!title) {
+                alert("Title is required");
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/tasks/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        title: title,
+                        description: description,
+                        status: status,
+                        category: category || null
+                    })
+                });
+
+                if (res.ok) {
+                    hideCreateModal();
+                    loadTasks();
+                    // Clear form
+                    document.getElementById('title').value = '';
+                    document.getElementById('description').value = '';
+                    document.getElementById('category').value = '';
+                } else {
+                    alert("Failed to create task");
+                }
+            } catch (error) {
+                alert("Error creating task");
+            }
+        }
+
+        // Load tasks on page load
+        window.onload = function() {
+            loadTasks();
+        }
+    </script>
+</body>
+</html>
