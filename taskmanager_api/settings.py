@@ -89,11 +89,13 @@ WSGI_APPLICATION = 'taskmanager_api.wsgi.application'
 #    }
 #}
 
-if 'RENDER' in os.environ:
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+if DATABASE_URL:
     # Production: PostgreSQL on Render
     DATABASES = {
         'default': dj_database_url.config(
-            default=os.environ.get('DATABASE_URL'),
+            default=DATABASE_URL,
             conn_max_age=600,
         )
     }
