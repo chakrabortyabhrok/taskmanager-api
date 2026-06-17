@@ -17,17 +17,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
-from django.http import HttpResponseNotFound
-
-def serve_frontend(request):
-    
-    if request.accepts('text/html'):
-        return TemplateView.as_view(template_name='index.html')(request)
-    return HttpResponseNotFound()
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/tasks/', serve_frontend),
-    path('api/', include('core.urls')),
-    path('', TemplateView.as_view(template_name='index.html')),
+    path('api/', include('core.urls')),                    # API routes only
+    path('', TemplateView.as_view(template_name='index.html')),  # Frontend only at root
 ]
