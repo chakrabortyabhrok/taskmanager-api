@@ -19,14 +19,15 @@ from django.urls import path, include
 from django.views.generic import TemplateView
 from django.http import HttpResponseNotFound
 
-def api_tasks_frontend(request):
+def serve_frontend(request):
+    
     if request.accepts('text/html'):
-        return TemplateView.as_view(template_name='index_name')(request)
+        return TemplateView.as_view(template_name='index.html')(request)
     return HttpResponseNotFound()
 
 urlpatterns = [
-    path('admin/', admin.site.urls, ),
-    path('api/tasks/', api_tasks_frontend),
+    path('admin/', admin.site.urls),
+    path('api/tasks/', serve_frontend),
     path('api/', include('core.urls')),
     path('', TemplateView.as_view(template_name='index.html')),
 ]
