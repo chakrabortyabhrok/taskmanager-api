@@ -11,7 +11,16 @@ class TaskSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Task
-        fields = '__all__'
+        fields = [
+            'id',
+            'title',
+            'description',
+            'status',
+            'category',
+            'due_date',
+            'created_at',
+            'updated_date',
+        ]
 
     def create(self, validated_data):
         category_name = validated_data.pop('category', None)

@@ -5,7 +5,7 @@ class Category(models.Model):
     slug = models.SlugField(unique=True)
 
     def __str__(self):
-        return self.slug
+        return self.name
     
     class Meta:
         ordering = ['name']
@@ -20,10 +20,11 @@ class Task(models.Model):
     title = models.CharField(max_length=50)
     description = models.TextField(blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='todo')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True)
     due_date = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True)
+    
 
     def __str__(self):
         return self.title
