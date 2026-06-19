@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from .models import Task, Category
-import django_filters
 
 class TaskSerializer(serializers.ModelSerializer):
     category = serializers.CharField(

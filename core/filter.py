@@ -1,7 +1,6 @@
 import django_filters
 from .models import Task
 
-
 class TaskFilter(django_filters.FilterSet):
     category = django_filters.CharFilter(
         field_name='category__name',
