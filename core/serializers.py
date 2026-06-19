@@ -19,7 +19,7 @@ class TaskSerializer(serializers.ModelSerializer):
             'category',
             'due_date',
             'created_at',
-            'updated_date',
+            'updated_at',
         ]
 
     def create(self, validated_data):
