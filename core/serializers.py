@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Task, Category
 
 class TaskSerializer(serializers.ModelSerializer):
+    """ Serializer for Task model with custom category handling. """
     category = serializers.CharField(
         write_only=True, 
         required=False, 
@@ -22,6 +23,7 @@ class TaskSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
+        """ Handle category creation or lookup when creating a task. """
         category_name = validated_data.pop('category', None)
 
         if category_name:

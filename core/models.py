@@ -1,6 +1,7 @@
 from django.db import models
 
 class Category(models.Model):
+    """ Model to categorize tasks. """
     name = models.CharField(max_length=25)
     slug = models.SlugField(unique=True)
 
@@ -11,6 +12,7 @@ class Category(models.Model):
         ordering = ['name']
 
 class Task(models.Model):
+    """ Model representing a single task. """
     STATUS_CHOICES = [
         ('todo', 'Todo'),
         ('in_progress', 'In Progress'),

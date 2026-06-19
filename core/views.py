@@ -1,7 +1,7 @@
 from rest_framework.viewsets import ModelViewSet
 from .models import Task
 from .serializers import TaskSerializer
-from .filter import TaskFilter
+from .filters import TaskFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
 from rest_framework.pagination import PageNumberPagination
@@ -12,6 +12,7 @@ class StandardPagination(PageNumberPagination):
     max_page_size = 100
 
 class TaskViewSet(ModelViewSet):
+    """ API ViewSet for managing tasks with filtering, searching, and pagination. """
     queryset = Task.objects.all()
     serializer_class = TaskSerializer 
     lookup_field = 'pk'
