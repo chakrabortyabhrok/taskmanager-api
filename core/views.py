@@ -1,6 +1,7 @@
 from rest_framework.viewsets import ModelViewSet
 from .models import Task
-from .serializers import TaskSerializer, TaskFilter
+from .serializers import TaskSerializer
+from .filter import TaskFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
 from rest_framework.pagination import PageNumberPagination
