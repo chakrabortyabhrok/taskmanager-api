@@ -195,20 +195,35 @@
     // Filter tasks (basic client-side for now)
     function filterTasks() {
         const status = document.getElementById('statusFilter').value;
-        const category = document.getElementById('categoryFilter').value.toLowerCase();
+        const category = document.getElementById('categoryFilter').value.trim();
 
-        loadTasks(1).then(() => {
-            const cards = document.querySelectorAll('#tasksContainer > div');
-            cards.forEach(card => {
-                const statusText = card.querySelector('.px-3')?.innerText.toLowerCase() || '';
-                const categoryText = card.innerText.toLowerCase();
-                
-                const statusMatch = !status || statusText.includes(status);
-                const categoryMatch = !category || categoryText.includes(category);
-                
-                card.style.display = (statusMatch && categoryMatch) ? 'block' : 'none';
+        let queryParams = [];
+
+        if (status) queryParams.push(`status=${status}`);
+        if (category) queryParams.push(`category=${encodeURIComponent(category)}`);
+
+        queryParams.push('page=1');
+
+        const queryString = queryParams.length > 0 ? `?${queryParams.join('&')}` : '';
+
+        console.log("Fetching:", `${API_BASE}/tasks/${queryString}`); // ← For debugging
+
+        fetch(`${API_BASE}/tasks/${queryString}`)
+            .then(res => {
+                if (!res.ok) throw new Error("API Error");
+                return res.json();
+            })
+            .then(data => {
+                console.log("API Response:", data); // ← For debugging
+                const tasks = data.results || data;
+                renderTasks(tasks);
+                renderPagination(data);
+            })
+            .catch(error => {
+                console.error("Fetch Error:", error);
+                document.getElementById('tasksContainer').innerHTML = 
+                    `<div class="col-span-3 text-red-500 text-center">Failed to load tasks</div>`;
             });
-        });
     }
 
     // Modal functions (keep as is)
