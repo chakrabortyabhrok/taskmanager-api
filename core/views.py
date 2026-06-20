@@ -3,7 +3,7 @@ from .models import Task
 from .serializers import TaskSerializer
 from .filters import TaskFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import SearchFilter
+from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.pagination import PageNumberPagination
 
 class StandardPagination(PageNumberPagination):
@@ -17,9 +17,11 @@ class TaskViewSet(ModelViewSet):
     serializer_class = TaskSerializer 
     lookup_field = 'pk'
     search_fields = ['title', 'description']
-    filter_backends = [DjangoFilterBackend, SearchFilter]
+
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = TaskFilter
     pagination_class = StandardPagination
+    ordering_fields = ['due_date', 'created_at', 'title']
     
     def get_serializer(self, *args, **kwargs):
         
