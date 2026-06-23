@@ -27,3 +27,17 @@ def get_ai_response(prompt: str, model: str = "gpt-4o-mini") -> str:
 
     except Exception as e:
         return f"Error: {str(e)}"
+    
+def generate_task_summary(task):
+    """Generate a short AI summary for a task."""
+    prompt = f"""
+    Summarize this task in 1-2 short sentences:
+    Title: {task.title}
+    Description: {task.description or 'No description'}
+    Status: {task.status}
+    """
+
+    try:
+        return get_ai_response(prompt)
+    except Exception as e:
+        return f"Error generating summary: {str(e)}"

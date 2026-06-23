@@ -22,7 +22,7 @@ class TaskViewSet(ModelViewSet):
     filterset_class = TaskFilter
     pagination_class = StandardPagination
     ordering_fields = ['due_date', 'created_at', 'title']
-    
+     
     def get_serializer(self, *args, **kwargs):
         
         if isinstance(kwargs.get('data'), list):

@@ -1,8 +1,9 @@
 from rest_framework import serializers
 from .models import Task, Category
+from core.ai_utils import generate_task_summary
 
 class TaskSerializer(serializers.ModelSerializer):
-    """ Serializer for Task model with custom category handling. """
+    """ Serializer for Task model with custom category handling and AI summary. """
     category = serializers.CharField(
         write_only=True, 
         required=False, 
@@ -20,10 +21,11 @@ class TaskSerializer(serializers.ModelSerializer):
             'due_date',
             'created_at',
             'updated_at',
+            'ai_summary'
         ]
 
     def create(self, validated_data):
-        """ Handle category creation or lookup when creating a task. """
+        """ Handle category creation + generate AI summary after task created """
         category_name = validated_data.pop('category', None)
 
         if category_name:
@@ -33,9 +35,35 @@ class TaskSerializer(serializers.ModelSerializer):
             )
             validated_data['category'] = category
 
-        return super().create(validated_data)
+            task = super().create(validated_data)
+
+            task.ai_summary = generate_task_summary(task)
+            task.save(update_fields=['ai_summary'])
+
+        return task
+    
+    def update(self, instance, validated_data):
+        """Handle category update + regenerate AI summary after task is updated."""
+        category_name = validated_data.pop('category', None)
+
+        if category_name:
+            category, created = Category.objects.get_or_create(
+                name=category_name,
+                defaults={'slug': category_name.lower().replace(" ", "-")}
+            )
+            validated_data['category'] = category
+
+        """ Update the task """
+        task = super().update(instance, validated_data)
+
+        """ Regenerate summary after update """
+        task.ai_summary = generate_task_summary(task)
+        task.save(update_fields=['ai_summary'])
+
+        return task
 
     def to_representation(self, instance):
+        """Show category name instead of ID in response."""
         representation = super().to_representation(instance)
         if instance.category:
             representation['category'] = instance.category.name
