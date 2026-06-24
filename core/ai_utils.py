@@ -42,4 +42,5 @@ def generate_task_summary(task):
     try:
         return get_ai_response(prompt)
     except Exception as e:
-        return f"Error generating summary: {str(e)}"
+        print(f"Error generating summary: {str(e)}")
+        return ""
