@@ -6,9 +6,6 @@ from openai import OpenAI
 load_dotenv()
 
 
-#client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
-
 def get_ai_response(prompt: str, model: str = "gpt-4o-mini") -> str:
     """ 
     Send a prompt to OpenAI and return the response.
