@@ -15,6 +15,7 @@ def get_ai_response(prompt: str, model: str = "gpt-4o-mini") -> str:
     This is a reusable function for future AI tasks.
     """
     try:
+        client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
         response = client.chat.completions.create(
             model=model,
             messages=[
