@@ -5,8 +5,8 @@ from openai import OpenAI
 """ Load environment variables from .env file """
 load_dotenv()
 
-""" Initialize OpenAI client """
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+#client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
 def get_ai_response(prompt: str, model: str = "gpt-4o-mini") -> str:
@@ -15,6 +15,7 @@ def get_ai_response(prompt: str, model: str = "gpt-4o-mini") -> str:
     This is a reusable function for future AI tasks.
     """
     try:
+        """ Initialize OpenAI client """
         client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
         response = client.chat.completions.create(
             model=model,
