@@ -10,6 +10,8 @@ class TaskSerializer(serializers.ModelSerializer):
         allow_null=True
     )
 
+    #ai_summary = serializers.CharField(read_only=True)
+
     class Meta:
         model = Task
         fields = [
@@ -36,7 +38,7 @@ class TaskSerializer(serializers.ModelSerializer):
             validated_data['category'] = category
 
             task = super().create(validated_data)
-
+            """ Generate summary after creating task """
             task.ai_summary = generate_task_summary(task)
             task.save(update_fields=['ai_summary'])
 
