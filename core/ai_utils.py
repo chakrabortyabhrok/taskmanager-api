@@ -62,11 +62,9 @@ def ask_ai_about_tasks(question: str, tasks: list):
     Answer the question clearly and concisely based on the tasks provided.
     CRITICAL FORMATTING RULES:
     1. Output your response strictly as a numbered or bulleted list.
-    2. DO NOT include any concluding text or summaries at the end.
-    3. If the answer is not clear from the tasks, reply exactly with: "I'm sorry, but the answer cannot be found in the provided tasks."
+    2. If the answer is not clear from the tasks, reply exactly with: "I'm sorry, but the answer cannot be found in the provided tasks."
 
     """
-    # DO NOT include any introductory sentences, conversational filler, or pleasantries (e.g., Do NOT say "Here are your tasks:"). Start directly with the first list item.
 
     try:
         return get_ai_response(prompt)
