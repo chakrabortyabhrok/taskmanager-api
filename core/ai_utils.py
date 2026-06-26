@@ -59,11 +59,10 @@ def ask_ai_about_tasks(question: str, tasks: list):
 
     User's question: {question}
 
-    Answer the question clearly and concisely based on the tasks provided.
-    CRITICAL FORMATTING RULES:
-    1. Output your response strictly as a numbered or bulleted list.
-    2. If the answer is not clear from the tasks, reply exactly with: "I'm sorry, but the answer cannot be found in the provided tasks."
-
+    Answer the question clearly and concisely based on the tasks above.
+    (Dont Give in normal paragraph style, should be in a structure with points or numbers)
+    If the answer is not clear from the tasks, say so politely.
+    
     """
 
     try:
