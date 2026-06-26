@@ -59,7 +59,8 @@ def ask_ai_about_tasks(question: str, tasks: list):
 
     User's question: {question}
 
-    Answer the quuestion clearly and concisely based on the tasks above, with points or numbers and good presentation.
+    Answer the question clearly and concisely based on the tasks above.
+    (Dont Give in normal paragraph style, should be in a structure with points or numbers)
     If the answer is not clear from the tasks, say so politely.
     """
 
