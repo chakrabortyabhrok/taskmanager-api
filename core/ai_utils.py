@@ -41,3 +41,29 @@ def generate_task_summary(task):
     except Exception as e:
         print(f"Error generating summary: {str(e)}")
         return ""
+    
+def ask_ai_about_tasks(question: str, tasks: list):
+    """
+    Takes a user's question and a list of tasks,
+    then asks OpenAI to answer based on the task data
+    """
+    #Convert tasks into a readable format for OpenAI
+    task_list = "\n".join(
+        [f"- {task.title} | Status: {task.status} | Category: {task.category or None} | Description: {task.description or 'No description'}" for task in tasks]
+    )
+    prompt = f"""
+    You are helpful assistant that answers questions about a user's tasks.
+    Here are the list of tasks:
+
+    {task_list}
+
+    User's question: {question}
+
+    Answer the quuestion clearly and concisely based on the tasks above.
+    If th answer is not clear from the tasks, say so politely.
+    """
+
+    try:
+        return get_ai_response(prompt)
+    except Exception as e:
+        return f"Sorry, I couldn't process your question right now. Error: {str(e)}"
