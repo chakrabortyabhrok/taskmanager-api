@@ -23,7 +23,7 @@ class TaskSerializer(serializers.ModelSerializer):
             'due_date',
             'created_at',
             'updated_at',
-            #'ai_summary'
+            'ai_summary'
         ]
 
     def create(self, validated_data):
@@ -39,6 +39,12 @@ class TaskSerializer(serializers.ModelSerializer):
 
             task = super().create(validated_data)
             """ Generate summary after creating task """
+            try:
+                task.ai_summary = generate_task_summary(task)
+                task.save(update_fields=['ai_summary'])
+            except Exception as e:
+                print(f"AI Summary failed for task {task.id}: {e}")
+
             #task.ai_summary = generate_task_summary(task)
             #task.save(update_fields=['ai_summary'])
 
@@ -59,6 +65,12 @@ class TaskSerializer(serializers.ModelSerializer):
         task = super().update(instance, validated_data)
 
         """ Regenerate summary after update """
+        try:
+            task.ai_summary = generate_task_summary(task)
+            task.save(update_fields=['ai_summary'])
+        except Exception as e:
+            print(f"AI Summary failed for task {task.id}: {e}")
+            
         # task.ai_summary = generate_task_summary(task)
         # task.save(update_fields=['ai_summary'])
 
