@@ -23,7 +23,7 @@ class TaskSerializer(serializers.ModelSerializer):
             'due_date',
             'created_at',
             'updated_at',
-            'ai_summary'
+            #'ai_summary'
         ]
 
     def create(self, validated_data):
@@ -39,8 +39,8 @@ class TaskSerializer(serializers.ModelSerializer):
 
             task = super().create(validated_data)
             """ Generate summary after creating task """
-            task.ai_summary = generate_task_summary(task)
-            task.save(update_fields=['ai_summary'])
+            #task.ai_summary = generate_task_summary(task)
+            #task.save(update_fields=['ai_summary'])
 
         return task
     
@@ -59,8 +59,8 @@ class TaskSerializer(serializers.ModelSerializer):
         task = super().update(instance, validated_data)
 
         """ Regenerate summary after update """
-        task.ai_summary = generate_task_summary(task)
-        task.save(update_fields=['ai_summary'])
+        # task.ai_summary = generate_task_summary(task)
+        # task.save(update_fields=['ai_summary'])
 
         return task
 
