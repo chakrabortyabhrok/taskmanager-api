@@ -26,3 +26,27 @@ A RESTful API built with Django and Django REST Framework that allows users to m
 ```bash
 git clone <https://github.com/chakrabortyabhrok/taskmanager-api.git>
 cd taskmanager-api
+```
+
+### 2. Create virtual environment
+
+```bash
+python -m venv env
+source env/bin/activate          
+```
+
+### 3. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Setup Environment Variables
+
+ - Create a .env file in the project root and add the following:
+```bash
+DEBUG=True
+SECRET_KEY=your-secret-key-here
+OPENAI_API_KEY=sk-proj-xxxxxxxxxxxxxxxxxxxxxxxx
+```
+
