@@ -43,10 +43,30 @@ pip install -r requirements.txt
 
 ### 4. Setup Environment Variables
 
- - Create a .env file in the project root and add the following:
+- Create a .env file in the project root and add the following:
+
 ```bash
 DEBUG=True
 SECRET_KEY=your-secret-key-here
 OPENAI_API_KEY=sk-proj-xxxxxxxxxxxxxxxxxxxxxxxx
 ```
+### 5. Run Migrations
+
+```bash
+python manage.py migrate
+```
+
+### 6. Create superuser (optional)
+
+```bash
+python manage.py createsuperuser
+```
+
+### 7. Run the server
+
+```bash
+python manage.py runserver
+```
+
+---
 
