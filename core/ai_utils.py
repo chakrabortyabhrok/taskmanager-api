@@ -1,6 +1,9 @@
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
+from langchain_chroma import Chroma
+from langchain_openai import OpenAIEmbeddings
+from langchain_core.documents import Document
 
 """ Load environment variables from .env file """
 load_dotenv()
@@ -69,3 +72,5 @@ def ask_ai_about_tasks(question: str, tasks: list):
         return get_ai_response(prompt)
     except Exception as e:
         return f"Sorry, I couldn't process your question right now. Error: {str(e)}"
+    
+def get_vectorstore()
