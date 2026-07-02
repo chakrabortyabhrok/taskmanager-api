@@ -73,4 +73,39 @@ def ask_ai_about_tasks(question: str, tasks: list):
     except Exception as e:
         return f"Sorry, I couldn't process your question right now. Error: {str(e)}"
     
-def get_vectorstore()
+def get_vectorstore():
+    """
+    Reurns a persistent Chroma vvector store.
+    It will create a folder called 'chroma_db' to store the data.
+    """
+    persist_directory = "chroma_db"
+
+    embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+
+    vectorstore = Chroma(
+        persist_directory=persist_directory,
+        embedding_function=embeddings
+    )
+    return vectorstore
+
+def add_task_to_vectorstore(task):
+    """
+    Converts a Task object into a Document and adds it to Chroma
+    """
+    #Combine title,status,description to create content for embedding
+    page_content = f"Title: {task.title}\nDescription: {task.description or 'No description'}\nStatus: {task.status}"
+
+    #Add metadata
+    metadata = {
+        "task_id": task.id,
+        "title": task.title,
+        "status": task.status,
+        "category": task.category.name if task.category else "None"
+    }
+
+    #Create a Document
+    document = Document(page_content=page_content, metadata=metadata)
+
+    #Get vectore store and add the document 
+    vectorstore = get_vectorstore()
+    vectorstore.add_documents([document])
