@@ -56,7 +56,7 @@ def ask_ai_about_tasks(question: str) -> str:
 
         #Retrieve most relevant tasks
         retriever = vectorstore.as_retriever(
-            search_kwargs={"k": 8}
+            search_kwargs={"k": 10}
         )
 
         relevant_docs = retriever.invoke(question)
