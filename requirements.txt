@@ -9,3 +9,6 @@ psycopg2-binary==2.9.12
 sqlparse==0.5.5
 openai==2.43.0
 python-dotenv==1.2.2
+langchain
+langchain-openai
+langchain-chroma
