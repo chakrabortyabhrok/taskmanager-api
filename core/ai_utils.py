@@ -59,7 +59,7 @@ def ask_ai_about_tasks(question: str) -> str:
             search_type="similarity",
             search_kwargs={"k": 8}
         )
-        
+
         relevant_docs = retriever.invoke(question)
 
         if not relevant_docs:
@@ -102,24 +102,27 @@ def get_vectorstore():
     )
     return vectorstore
 
+
 def add_task_to_vectorstore(task):
     """
-    Converts a Task object into a Document and adds it to Chroma
+    Converts a Task into a well-formatted Document and stores it in Chroma.
     """
-    #Combine title,status,description to create content for embedding
-    page_content = f"Title: {task.title}\nDescription: {task.description or 'No description'}\nStatus: {task.status}"
+    # Create natural language content (better for embeddings)
+    page_content = (
+        f"Task Title: {task.title}. "
+        f"Description: {task.description or 'No description provided'}. "
+        f"Current Status: {task.status}. "
+        f"Category: {task.category.name if task.category else 'No category'}."
+    )
 
-    #Add metadata
     metadata = {
         "task_id": task.id,
         "title": task.title,
         "status": task.status,
         "category": task.category.name if task.category else "None"
     }
-
     #Create a Document
     document = Document(page_content=page_content, metadata=metadata)
-
     #Get vectore store and add the document 
     vectorstore = get_vectorstore()
     vectorstore.add_documents([document])
