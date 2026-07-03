@@ -24,19 +24,11 @@ class AskAIView(APIView):
                 {"error": "Question is required."},
                 status = status.HTTP_400_BAD_REQUEST
             )
-        
-        #Fetch all tasks
-        tasks = Task.objects.all()
 
-        if not tasks.exists():
-            return Response(
-                {"answer": "You don't have any tasks yet."},
-                status=status.HTTP_200_OK
-            )
         #Get answer from OpenAI
-        answer = ask_ai_about_tasks(question, tasks)
+        answer = ask_ai_about_tasks(question)
 
-        return Response({"answers": answer}, status=status.HTTP_200_OK)
+        return Response({"answer": answer}, status=status.HTTP_200_OK)
 
 class StandardPagination(PageNumberPagination):
     page_size = 10
