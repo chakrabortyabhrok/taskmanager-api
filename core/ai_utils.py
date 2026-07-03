@@ -47,31 +47,41 @@ def generate_task_summary(task):
     
 def ask_ai_about_tasks(question: str, tasks: list):
     """
-    Takes a user's question and a list of tasks,
-    then asks OpenAI to answer based on the task data
+    Takes a user's question, retrieves relevant tasks from Chroma,
+    and returns an AI-generated answer.
     """
-    #Convert tasks into a readable format for OpenAI
-    task_list = "\n".join(
-        [f"- {task.title} | Status: {task.status} | Category: {task.category or None} | Description: {task.description or 'No description'}" for task in tasks]
-    )
-    prompt = f"""
-    You are helpful assistant that answers questions about a user's tasks.
-    Here are the list of tasks:
-
-    {task_list}
-
-    User's question: {question}
-
-    Answer the question clearly and concisely based on the tasks above.
-    (Dont Give in normal paragraph style, should be in a structure with points or numbers)
-    If the answer is not clear from the tasks, say so politely.
-    
-    """
-
     try:
+        #Get the vector store
+        vectorstore = get_vectorstore()
+
+        #Retrieve most relevant tasks
+        retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
+        relevant_docs = retriever.invoke(question)
+
+        if not relevant_docs:
+            return "I couldn't find any relevant tasks for your question"
+        
+        #Combining the content of relevant documents
+        context = "\n\n".join([doc.page_content for doc in relevant_docs])
+        
+        prompt = f"""
+        You are helpful assistant that answers questions about a user's tasks.
+        Here are some relevant tasks:
+
+        {context}
+
+        User's question: {question}
+
+        Answer the question clearly and concisely based on the tasks above.
+        (Dont Give in normal paragraph style, should be in a structure with points or numbers)
+        If the answer is not clear from the tasks, say so politely.
+      
+        """
+
         return get_ai_response(prompt)
+
     except Exception as e:
-        return f"Sorry, I couldn't process your question right now. Error: {str(e)}"
+        return f"Sorry, something went wrong while processing your question. Error: {str(e)}"
     
 def get_vectorstore():
     """
