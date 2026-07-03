@@ -47,44 +47,39 @@ def generate_task_summary(task):
     
 def ask_ai_about_tasks(question: str) -> str:
     """
-    Takes a user's question, retrieves relevant tasks from Chroma,
-    and returns an AI-generated answer.
+    Uses RAG to answer questions about tasks.
     """
     try:
-        #Get the vector store
         vectorstore = get_vectorstore()
 
-        #Retrieve most relevant tasks
         retriever = vectorstore.as_retriever(
-            search_kwargs={"k": 10}
+            search_kwargs={"k": 12}
         )
 
         relevant_docs = retriever.invoke(question)
 
         if not relevant_docs:
-            return "I couldn't find any relevant tasks for your question"
-        
-        #Combining the content of relevant documents
-        context = "\n\n".join([doc.page_content for doc in relevant_docs])
-        
-        prompt = f"""
-        You are helpful assistant that answers questions about a user's tasks.
-        Here are some relevant tasks:
+            return "I couldn't find any relevant tasks for your question."
 
+        # Combine the content
+        context = "\n\n".join([doc.page_content for doc in relevant_docs])
+
+        prompt = f"""
+        You are a helpful assistant that answers questions about the user's tasks.
+
+        Here is information about some of the user's tasks:
         {context}
 
-        User's question: {question}
+        User's Question: {question}
 
-        Answer the question clearly and concisely based on the tasks above.
-        (Dont Give in normal paragraph style, should be in a structure with points or numbers)
-        If the answer is not clear from the tasks, say so politely.
-      
+        Answer the question based on the tasks provided above.
+        If you cannot find a clear answer, say so politely.
         """
 
         return get_ai_response(prompt)
 
     except Exception as e:
-        return f"Sorry, something went wrong while processing your question. Error: {str(e)}"
+        return f"Sorry, I ran into an error while answering. Error: {str(e)}"
     
 def get_vectorstore():
     """
