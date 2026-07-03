@@ -56,12 +56,10 @@ def ask_ai_about_tasks(question: str) -> str:
 
         #Retrieve most relevant tasks
         retriever = vectorstore.as_retriever(
-            search_type="similarity_score_threshold",
-            search_kwargs={
-            "k": 8,
-            "score_threshold": 0.3
-            }
+            search_type="similarity",
+            search_kwargs={"k": 8}
         )
+        
         relevant_docs = retriever.invoke(question)
 
         if not relevant_docs:
@@ -125,18 +123,3 @@ def add_task_to_vectorstore(task):
     #Get vectore store and add the document 
     vectorstore = get_vectorstore()
     vectorstore.add_documents([document])
-
-def backfill_tasks_to_chroma():
-    """
-    Add all existing tasks from database to Chroma.
-    """
-    from core.models import Task
-
-    tasks = Task.objects.all()
-    count = 0
-
-    for task in tasks:
-        add_task_to_vectorstore(task)
-        count += 1
-
-    print(f"Successfully added {count} tasks to Chroma.")
