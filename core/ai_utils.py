@@ -45,7 +45,7 @@ def generate_task_summary(task):
         print(f"Error generating summary: {str(e)}")
         return ""
     
-def ask_ai_about_tasks(question: str, tasks: list):
+def ask_ai_about_tasks(question: str) -> str:
     """
     Takes a user's question, retrieves relevant tasks from Chroma,
     and returns an AI-generated answer.
