@@ -56,7 +56,6 @@ def ask_ai_about_tasks(question: str) -> str:
 
         #Retrieve most relevant tasks
         retriever = vectorstore.as_retriever(
-            search_type="similarity",
             search_kwargs={"k": 8}
         )
 
