@@ -44,43 +44,46 @@ def generate_task_summary(task):
     except Exception as e:
         print(f"Error generating summary: {str(e)}")
         return ""
-    
-def ask_ai_about_tasks(question: str) -> str:
-    """
-    Uses RAG to answer questions about tasks.
-    """
-    try:
-        vectorstore = get_vectorstore()
 
-        retriever = vectorstore.as_retriever(
-            search_kwargs={"k": 12}
-        )
+def ask_ai_about_tasks(question: str) -> str:
+    try:
+        print("=== DEBUG: Function called ===")
+        print("Question received:", question)
+
+        vectorstore = get_vectorstore()
+        retriever = vectorstore.as_retriever(search_kwargs={"k": 10})
 
         relevant_docs = retriever.invoke(question)
+        print("Number of documents retrieved:", len(relevant_docs))
 
         if not relevant_docs:
             return "I couldn't find any relevant tasks for your question."
 
-        # Combine the content
         context = "\n\n".join([doc.page_content for doc in relevant_docs])
-
         prompt = f"""
         You are a helpful assistant that answers questions about the user's tasks.
+        
+        Important Rules:
+        - You are given only a **partial list** of the user's tasks (not all of them).
+        - Base your answer **only** on the tasks provided in the context below.
+        - If the user asks for a count (e.g., "How many tasks...?"), and you don't have all the tasks, clearly mention that your answer is based on the available information only.
+        - Do not make up or guess information.
+        - If you cannot answer the question using the given tasks, politely say so.
 
-        Here is information about some of the user's tasks:
+        Here is the relevant task information:
         {context}
 
         User's Question: {question}
 
-        Answer the question based on the tasks provided above.
-        If you cannot find a clear answer, say so politely.
+        Answer the question clearly and concisely.
         """
 
         return get_ai_response(prompt)
 
     except Exception as e:
-        return f"Sorry, I ran into an error while answering. Error: {str(e)}"
-    
+        print("Error occurred:", e)
+        return f"Sorry, something went wrong. Error: {str(e)}"
+
 def get_vectorstore():
     """
     Reurns a persistent Chroma vvector store.
