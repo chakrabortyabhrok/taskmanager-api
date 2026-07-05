@@ -124,36 +124,3 @@ def add_task_to_vectorstore(task):
     vectorstore = get_vectorstore()
     vectorstore.add_documents([document])
 
-def backfill_tasks_to_chroma():
-    """
-    Add all existing tasks from database to Chroma.
-    """
-    from core.models import Task
-
-    tasks = Task.objects.all()
-    count = 0
-
-    for task in tasks:
-        add_task_to_vectorstore(task)
-        count += 1
-
-    print(f"Successfully added {count} tasks to Chroma.")
-
-def ensure_tasks_are_embedded():
-    """
-    Checks if Chroma is empty. If yes, backfills all tasks from database.
-    This runs automatically when the app starts.
-    """
-    vectorstore = get_vectorstore()
-    
-    if vectorstore._collection.count() == 0:
-        print("Chroma is empty. Backfilling tasks from database...")
-        from core.models import Task
-        
-        tasks = Task.objects.all()
-        for task in tasks:
-            add_task_to_vectorstore(task)
-        
-        print(f"Backfilled {tasks.count()} tasks into Chroma.")
-    else:
-        print(f"Chroma already has {vectorstore._collection.count()} documents.")
