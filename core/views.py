@@ -8,7 +8,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .ai_utils import ask_ai_about_tasks, backfill_tasks_to_chroma, add_task_to_vectorstore
+from .ai_utils import ask_ai_about_tasks, add_task_to_vectorstore
 
 
 class AskAIView(APIView):
