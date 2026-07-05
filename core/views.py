@@ -8,6 +8,8 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from django.db import connection
 from .ai_utils import ask_ai_about_tasks, add_task_to_vectorstore
 
 
@@ -53,3 +55,8 @@ class TaskViewSet(ModelViewSet):
             kwargs['many'] = True
         return super().get_serializer(*args, **kwargs)
     
+@api_view(['GET'])
+def test_db(request):
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT 1")
+    return Response({"database": "Connected successfully"})
