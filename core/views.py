@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.db import connection
-from .ai_utils import ask_ai_about_tasks, add_task_to_vectorstore
+from .ai_utils import ask_ai_about_tasks, add_task_to_vectorstore, get_vectorstore
 
 
 class AskAIView(APIView):
@@ -56,7 +56,10 @@ class TaskViewSet(ModelViewSet):
         return super().get_serializer(*args, **kwargs)
     
 @api_view(['GET'])
-def test_db(request):
-    with connection.cursor() as cursor:
-        cursor.execute("SELECT 1")
-    return Response({"database": "Connected successfully"})
+def chroma_status(request):
+    vectorstore = get_vectorstore()
+    count = vectorstore._collection.count()
+    return Response({
+        "tasks_in_chroma": count,
+        "message": f"Currently {count} tasks are embedded in Chroma"
+    })
