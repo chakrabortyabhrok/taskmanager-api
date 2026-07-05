@@ -8,7 +8,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .ai_utils import ask_ai_about_tasks, backfill_tasks_to_chroma
+from .ai_utils import ask_ai_about_tasks, backfill_tasks_to_chroma, add_task_to_vectorstore
 
 
 class AskAIView(APIView):
@@ -55,8 +55,8 @@ class TaskViewSet(ModelViewSet):
     
 class BackfillChromaView(APIView):
     """
-    Temporary view to backfill all existing tasks into Chroma.
-    This should be removed after one-time use.
+    Temporary endpoint to backfill tasks into Chroma.
+    Remove this after one-time use.
     """
     def post(self, request):
         secret_key = request.data.get("secret_key", "")
@@ -68,14 +68,27 @@ class BackfillChromaView(APIView):
             )
 
         try:
-            backfill_tasks_to_chroma()
-            return Response(
-                {"message": "Backfill completed successfully"},
-                status=status.HTTP_200_OK
-            )
+            tasks = Task.objects.all()
+            success_count = 0
+            failed_count = 0
+
+            for task in tasks:
+                try:
+                    add_task_to_vectorstore(task)
+                    success_count += 1
+                except Exception as e:
+                    failed_count += 1
+                    print(f"Failed to embed task {task.id}: {e}")
+
+            return Response({
+                "message": "Backfill completed",
+                "total_tasks": tasks.count(),
+                "successfully_added": success_count,
+                "failed": failed_count
+            }, status=status.HTTP_200_OK)
+
         except Exception as e:
             return Response(
                 {"error": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-        
