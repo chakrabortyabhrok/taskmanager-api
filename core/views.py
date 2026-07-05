@@ -8,7 +8,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .ai_utils import ask_ai_about_tasks
+from .ai_utils import ask_ai_about_tasks, backfill_tasks_to_chroma
 
 
 class AskAIView(APIView):
@@ -53,3 +53,29 @@ class TaskViewSet(ModelViewSet):
             kwargs['many'] = True
         return super().get_serializer(*args, **kwargs)
     
+class BackfillChromaView(APIView):
+    """
+    Temporary view to backfill all existing tasks into Chroma.
+    This should be removed after one-time use.
+    """
+    def post(self, request):
+        secret_key = request.data.get("secret_key", "")
+
+        if secret_key != "backfill-chroma-2026":
+            return Response(
+                {"error": "Invalid secret key"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        try:
+            backfill_tasks_to_chroma()
+            return Response(
+                {"message": "Backfill completed successfully"},
+                status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        
