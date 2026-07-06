@@ -10,6 +10,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.db import connection
+from django.contrib.auth import get_user_model
 from .ai_utils import ask_ai_about_tasks, add_task_to_vectorstore, get_vectorstore
 
 
@@ -63,3 +64,40 @@ def chroma_status(request):
         "tasks_in_chroma": count,
         "message": f"Currently {count} tasks are embedded in Chroma"
     })
+
+User = get_user_model()
+
+class CreateSuperUserView(APIView):
+    """
+    Temporary view to create a superuser on production.
+    Delete this after creating the superuser.
+    """
+    def post(self, request):
+        secret_key = request.data.get("secret_key", "")
+        
+        # Change this secret key to something only you know
+        if secret_key != "create-superuser-2026":
+            return Response({"error": "Invalid secret key"}, status=status.HTTP_403_FORBIDDEN)
+
+        username = request.data.get("username")
+        password = request.data.get("password")
+        email = request.data.get("email", "")
+
+        if not username or not password:
+            return Response({"error": "username and password are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if User.objects.filter(username=username).exists():
+            return Response({"error": "User already exists"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = User.objects.create_superuser(
+                username=username,
+                email=email,
+                password=password
+            )
+            return Response({
+                "message": f"Superuser '{username}' created successfully",
+                "username": user.username
+            }, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
