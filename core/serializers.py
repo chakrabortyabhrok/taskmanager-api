@@ -36,17 +36,17 @@ class TaskSerializer(serializers.ModelSerializer):
             )
             validated_data['category'] = category
 
-        # Create task (this should always run)
+        # Create the task (this must always run)
         task = super().create(validated_data)
 
-        # Generate AI summary + add to Chroma (always run)
+        # Generate AI summary + add to Chroma (this must always run)
         try:
             task.ai_summary = generate_task_summary(task)
             task.save(update_fields=['ai_summary'])
             add_task_to_vectorstore(task)
         except Exception as e:
-            print(f"AI Summary failed for task {task.id}: {e}")
-            
+            print(f"AI Summary / Chroma failed for task {task.id}: {e}")
+
         return task
     
     def update(self, instance, validated_data):
