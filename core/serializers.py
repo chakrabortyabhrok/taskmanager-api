@@ -36,16 +36,17 @@ class TaskSerializer(serializers.ModelSerializer):
             )
             validated_data['category'] = category
 
-        # Create the task (this must always run)
+        # Always create the task first
         task = super().create(validated_data)
 
-        # Generate AI summary + add to Chroma (this must always run)
+        # Safely try AI + Chroma (task will still be created even if this fails)
         try:
             task.ai_summary = generate_task_summary(task)
             task.save(update_fields=['ai_summary'])
             add_task_to_vectorstore(task)
         except Exception as e:
-            print(f"AI Summary / Chroma failed for task {task.id}: {e}")
+            print(f"⚠️ AI/Chroma failed for task {getattr(task, 'id', 'unknown')}: {e}")
+            # We do NOT re-raise the error, so task creation succeeds
 
         return task
     
