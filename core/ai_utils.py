@@ -51,7 +51,7 @@ def ask_ai_about_tasks(question: str) -> str:
         print("Question received:", question)
 
         vectorstore = get_vectorstore()
-        retriever = vectorstore.as_retriever(search_kwargs={"k": 10})
+        retriever = vectorstore.as_retriever(search_kwargs={"k": 15})
 
         relevant_docs = retriever.invoke(question)
         print("Number of documents retrieved:", len(relevant_docs))

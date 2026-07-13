@@ -25,9 +25,8 @@ class TaskSerializer(serializers.ModelSerializer):
             'updated_at',
             'ai_summary'
         ]
-
+    
     def create(self, validated_data):
-        """ Handle category creation + generate AI summary after task created """
         category_name = validated_data.pop('category', None)
 
         if category_name:
@@ -37,19 +36,17 @@ class TaskSerializer(serializers.ModelSerializer):
             )
             validated_data['category'] = category
 
-            task = super().create(validated_data)
-            """ Generate summary after creating task """
-            try:
-                task.ai_summary = generate_task_summary(task)
-                task.save(update_fields=['ai_summary'])
-                add_task_to_vectorstore(task)
+        # Create task (this should always run)
+        task = super().create(validated_data)
 
-            except Exception as e:
-                print(f"AI Summary failed for task {task.id}: {e}")
-
-            #task.ai_summary = generate_task_summary(task)
-            #task.save(update_fields=['ai_summary'])
-
+        # Generate AI summary + add to Chroma (always run)
+        try:
+            task.ai_summary = generate_task_summary(task)
+            task.save(update_fields=['ai_summary'])
+            add_task_to_vectorstore(task)
+        except Exception as e:
+            print(f"AI Summary failed for task {task.id}: {e}")
+            
         return task
     
     def update(self, instance, validated_data):

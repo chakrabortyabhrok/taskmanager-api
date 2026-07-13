@@ -34,7 +34,7 @@ class AskAIView(APIView):
         return Response({"answer": answer}, status=status.HTTP_200_OK)
 
 class StandardPagination(PageNumberPagination):
-    page_size = 10
+    page_size = 50
     page_size_query_param = 'page_size'
     max_page_size = 100
 
