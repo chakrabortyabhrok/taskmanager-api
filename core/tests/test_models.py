@@ -29,8 +29,8 @@ def test_task_update():
     )
 
     #Act(Update)
-    task.title = 'Test Task Updated',
-    task.description = 'Updated Description',
+    task.title = 'Test Task Updated'
+    task.description = 'Updated Description'
     task.save()
 
     assert task.title == 'Test Task Updated'
