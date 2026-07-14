@@ -15,3 +15,22 @@ def test_task_creation():
     assert task.title == 'Test Task Creation'
     assert task.description == 'This is a test for model creation'
     assert task.id is not None
+
+def test_task_update():
+
+    #Arrange
+    task = Task.objects.create(
+        title = 'Test Task. ',
+        description = 'This is a test for model update',
+        status = 'todo'
+    )
+
+    #Act(Update)
+    task.title = 'Test Task Udated',
+    task.description = 'Updated Description',
+    task.save()
+
+    assert task.title == 'Test Task Udated'
+    assert task.description == 'Updated Description'
+    assert task.status == 'todo'
+    
