@@ -76,4 +76,3 @@ class TaskSerializer(serializers.ModelSerializer):
         else:
             representation['category'] = None
         return representation
-    
