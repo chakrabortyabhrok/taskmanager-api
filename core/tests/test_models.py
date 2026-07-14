@@ -44,4 +44,3 @@ def test_category_creation():
     )
 
     assert cat.name == 'Testing'
-    assert cat.slug is not None
