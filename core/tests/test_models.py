@@ -18,6 +18,7 @@ def test_task_creation():
     assert task.description == 'This is a test for model creation'
     assert task.id is not None
 
+@pytest.mark.django_db
 def test_task_update():
 
     #Arrange
@@ -28,11 +29,11 @@ def test_task_update():
     )
 
     #Act(Update)
-    task.title = 'Test Task Udated',
+    task.title = 'Test Task Updated',
     task.description = 'Updated Description',
     task.save()
 
-    assert task.title == 'Test Task Udated'
+    assert task.title == 'Test Task Updated'
     assert task.description == 'Updated Description'
     assert task.status == 'todo'
     
