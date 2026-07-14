@@ -1,6 +1,8 @@
 import pytest
 from core.models import Task
 
+
+@pytest.mark.django_db
 def test_task_creation():
 
     #Arrange : prepare the test data
