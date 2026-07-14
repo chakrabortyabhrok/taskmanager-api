@@ -1,5 +1,5 @@
 import pytest
-from core.models import Task
+from core.models import Task, Category
 
 
 @pytest.mark.django_db
@@ -37,3 +37,11 @@ def test_task_update():
     assert task.description == 'Updated Description'
     assert task.status == 'todo'
     
+@pytest.mark.django_db
+def test_category_creation():
+    cat = Category.objects.create(
+        name = 'Testing'
+    )
+
+    assert cat.name == 'Testing'
+    assert cat.slug is not None
