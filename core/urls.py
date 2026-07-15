@@ -1,6 +1,6 @@
 from rest_framework.routers import DefaultRouter
 from django.urls import path
-from .views import TaskViewSet, AskAIView, chroma_status, CreateSuperUserView, DeleteAllTasksView
+from .views import TaskViewSet, AskAIView, chroma_status, CreateSuperUserView#, DeleteAllTasksView
 
 router = DefaultRouter()
 router.register(r'tasks', TaskViewSet, basename='task')
