@@ -86,12 +86,19 @@ def ask_ai_about_tasks(question: str) -> str:
 
 def get_vectorstore():
     """
-    Returns a PGVector store connected to my PostgreSQL database.
+    Returns a PGVector store.
+    Works both locally (using .env) and on Render.
     """
+    from dotenv import load_dotenv
+    load_dotenv()   # Load variables from .env file locally
+
     connection_string = os.environ.get("DATABASE_URL")
-    
+
     if not connection_string:
-        raise ValueError("DATABASE_URL environment variable is not set")
+        raise ValueError(
+            "DATABASE_URL is not set. "
+            "Make sure it exists in your .env file (locally) or is provided by Render."
+        )
 
     embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
 
