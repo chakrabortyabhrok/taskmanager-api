@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
-from langchain_chroma import Chroma
+from langchain_postgres import PGVector
 from langchain_openai import OpenAIEmbeddings
 from langchain_core.documents import Document
 
@@ -86,25 +86,27 @@ def ask_ai_about_tasks(question: str) -> str:
 
 def get_vectorstore():
     """
-    Reurns a persistent Chroma vvector store.
-    It will create a folder called 'chroma_db' to store the data.
+    Returns a PGVector store connected to my PostgreSQL database.
     """
-    persist_directory = "chroma_db"
+    connection_string = os.environ.get("DATABASE_URL")
+    
+    if not connection_string:
+        raise ValueError("DATABASE_URL environment variable is not set")
 
     embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
 
-    vectorstore = Chroma(
-        persist_directory=persist_directory,
-        embedding_function=embeddings
+    vectorstore = PGVector(
+        embeddings=embeddings,
+        collection_name="task_embeddings",
+        connection=connection_string,
+        use_jsonb=True,
     )
     return vectorstore
 
-
 def add_task_to_vectorstore(task):
     """
-    Converts a Task into a well-formatted Document and stores it in Chroma.
+    Converts a Task into a Document and stores it in pgvector.
     """
-    # Create natural language content (better for embeddings)
     page_content = (
         f"Task Title: {task.title}. "
         f"Description: {task.description or 'No description provided'}. "
@@ -118,9 +120,9 @@ def add_task_to_vectorstore(task):
         "status": task.status,
         "category": task.category.name if task.category else "None"
     }
-    #Create a Document
+    #Creates a Document
     document = Document(page_content=page_content, metadata=metadata)
+
     #Get vectore store and add the document 
     vectorstore = get_vectorstore()
     vectorstore.add_documents([document])
-
