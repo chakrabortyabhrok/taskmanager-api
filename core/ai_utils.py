@@ -125,3 +125,4 @@ def ask_ai_about_tasks(question: str) -> str:
     except Exception as e:
         print("Error in ask_ai_about_tasks:", e)
         return f"Sorry, something went wrong. Error: {str(e)}"
+    
