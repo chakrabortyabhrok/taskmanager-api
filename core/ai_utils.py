@@ -1,104 +1,54 @@
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
-from langchain_postgres import PGVector
 from langchain_openai import OpenAIEmbeddings
 from langchain_core.documents import Document
 
-""" Load environment variables from .env file """
 load_dotenv()
 
 
 def get_ai_response(prompt: str, model: str = "gpt-4o-mini") -> str:
-    """ 
-    Send a prompt to OpenAI and return the response.
-    This is a reusable function for future AI tasks.
-    """
     try:
-        """ Initialize OpenAI client """
         client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
         response = client.chat.completions.create(
             model=model,
-            messages=[
-                {"role": "user", "content": prompt}
-            ],
+            messages=[{"role": "user", "content": prompt}],
             max_tokens=300,
             temperature=0.7
         )
         return response.choices[0].message.content.strip()
-
     except Exception as e:
         return f"Error: {str(e)}"
-    
+
+
 def generate_task_summary(task):
-    """Generate a short AI summary for a task."""
     prompt = f"""
     Summarize this task in 1-2 very short sentences:
     Title: {task.title}
     Description: {task.description or 'No description'}
     Status: {task.status}
     """
-
     try:
         return get_ai_response(prompt)
     except Exception as e:
         print(f"Error generating summary: {str(e)}")
         return ""
 
-def ask_ai_about_tasks(question: str) -> str:
-    try:
-        print("=== DEBUG: Function called ===")
-        print("Question received:", question)
-
-        vectorstore = get_vectorstore()
-        retriever = vectorstore.as_retriever(search_kwargs={"k": 15})
-
-        relevant_docs = retriever.invoke(question)
-        print("Number of documents retrieved:", len(relevant_docs))
-
-        if not relevant_docs:
-            return "I couldn't find any relevant tasks for your question."
-
-        context = "\n\n".join([doc.page_content for doc in relevant_docs])
-        prompt = f"""
-        You are a helpful assistant that answers questions about the user's tasks.
-        
-        Important Rules:
-        - You are given only a **partial list** of the user's tasks (not all of them).
-        - Base your answer **only** on the tasks provided in the context below.
-        - If the user asks for a count (e.g., "How many tasks...?"), and you don't have all the tasks, clearly mention that your answer is based on the available information only.
-        - Do not make up or guess information.
-        - If you cannot answer the question using the given tasks, politely say so.
-
-        Here is the relevant task information:
-        {context}
-
-        User's Question: {question}
-
-        Answer the question clearly and concisely.
-        """
-
-        return get_ai_response(prompt)
-
-    except Exception as e:
-        print("Error occurred:", e)
-        return f"Sorry, something went wrong. Error: {str(e)}"
 
 def get_vectorstore():
     """
-    Returns a PGVector store.
-    Works both locally (using .env) and on Render.
+    Smart vectorstore:
+    - On Render (has DATABASE_URL) → uses PGVector (PostgreSQL)
+    - Locally (SQLite) → returns None (embedding is skipped)
     """
-    from dotenv import load_dotenv
-    load_dotenv()   # Load variables from .env file locally
-
     connection_string = os.environ.get("DATABASE_URL")
 
     if not connection_string:
-        raise ValueError(
-            "DATABASE_URL is not set. "
-            "Make sure it exists in your .env file (locally) or is provided by Render."
-        )
+        # Running locally with SQLite → no pgvector available
+        print("⚠️  Running on SQLite. Vector store is disabled (pgvector needs PostgreSQL).")
+        return None
+
+    from langchain_postgres import PGVector
 
     embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
 
@@ -110,10 +60,17 @@ def get_vectorstore():
     )
     return vectorstore
 
+
 def add_task_to_vectorstore(task):
     """
-    Converts a Task into a Document and stores it in pgvector.
+    Adds task to vector store only if PostgreSQL is available.
     """
+    vectorstore = get_vectorstore()
+
+    if vectorstore is None:
+        # Local SQLite mode → skip embedding
+        return
+
     page_content = (
         f"Task Title: {task.title}. "
         f"Description: {task.description or 'No description provided'}. "
@@ -127,9 +84,44 @@ def add_task_to_vectorstore(task):
         "status": task.status,
         "category": task.category.name if task.category else "None"
     }
-    #Creates a Document
-    document = Document(page_content=page_content, metadata=metadata)
 
-    #Get vectore store and add the document 
-    vectorstore = get_vectorstore()
+    document = Document(page_content=page_content, metadata=metadata)
     vectorstore.add_documents([document])
+
+
+def ask_ai_about_tasks(question: str) -> str:
+    try:
+        vectorstore = get_vectorstore()
+
+        if vectorstore is None:
+            return "AI search is only available in production (PostgreSQL + pgvector)."
+
+        retriever = vectorstore.as_retriever(search_kwargs={"k": 15})
+        relevant_docs = retriever.invoke(question)
+
+        if not relevant_docs:
+            return "I couldn't find any relevant tasks for your question."
+
+        context = "\n\n".join([doc.page_content for doc in relevant_docs])
+
+        prompt = f"""
+        You are a helpful assistant that answers questions about the user's tasks.
+
+        Important Rules:
+        - You are given only a partial list of the user's tasks (not all of them).
+        - Base your answer only on the tasks provided below.
+        - If the user asks for a count and you don't have all tasks, say so clearly.
+        - Do not make up information.
+
+        Relevant tasks:
+        {context}
+
+        User's Question: {question}
+
+        Answer clearly and concisely.
+        """
+        return get_ai_response(prompt)
+
+    except Exception as e:
+        print("Error in ask_ai_about_tasks:", e)
+        return f"Sorry, something went wrong. Error: {str(e)}"
