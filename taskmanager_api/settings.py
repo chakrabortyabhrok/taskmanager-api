@@ -95,15 +95,8 @@ DATABASE_URL = os.environ.get('DATABASE_URL')
 if DATABASE_URL:
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'your_db_name',
-            'USER': 'your_user',
-            'PASSWORD': 'your_password',
-            'HOST': '127.0.0.1',
-            'PORT': '5432',
-            'OPTIONS': {
-                'sslmode': 'disable',
-            }
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
     
