@@ -126,3 +126,22 @@ def ask_ai_about_tasks(question: str) -> str:
         print("Error in ask_ai_about_tasks:", e)
         return f"Sorry, something went wrong. Error: {str(e)}"
     
+def clear_vectorstore():
+    """
+    Completely clears all documents from the pgvector collection.
+    Use this carefully.
+    """
+    vectorstore = get_vectorstore()
+
+    if vectorstore is None:
+        print("Vector store is not available (running on SQLite).")
+        return False
+
+    try:
+        # This deletes the entire collection and recreates it empty
+        vectorstore.delete_collection()
+        print("Successfully cleared the vector store.")
+        return True
+    except Exception as e:
+        print(f"Error while clearing vector store: {e}")
+        return False
