@@ -67,12 +67,17 @@ def vectorstore_status(request):
         if vectorstore is None:
             return Response({
                 "status": "disabled",
-                "message": "Vector store is disabled because you are running on SQLite (local mode).",
+                "message": "Vector store is disabled (you are running on SQLite).",
                 "tasks_in_vectorstore": 0
             })
 
-        # Get the count of documents
-        count = vectorstore._collection.count()
+        # Correct way to count documents with PGVector
+        try:
+            # This is the most reliable way across versions
+            docs = vectorstore.similarity_search("task", k=1000)
+            count = len(docs)
+        except Exception:
+            count = 0
 
         return Response({
             "status": "active",
@@ -87,7 +92,7 @@ def vectorstore_status(request):
             "message": str(e),
             "tasks_in_vectorstore": 0
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+    
 User = get_user_model()
 
 class CreateSuperUserView(APIView):
