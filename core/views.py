@@ -57,13 +57,36 @@ class TaskViewSet(ModelViewSet):
         return super().get_serializer(*args, **kwargs)
     
 @api_view(['GET'])
-def chroma_status(request):
-    vectorstore = get_vectorstore()
-    count = vectorstore._collection.count()
-    return Response({
-        "tasks_in_chroma": count,
-        "message": f"Currently {count} tasks are embedded in Chroma"
-    })
+def vectorstore_status(request):
+    """
+    Check how many tasks are currently stored in the vector database (pgvector).
+    """
+    try:
+        vectorstore = get_vectorstore()
+
+        if vectorstore is None:
+            return Response({
+                "status": "disabled",
+                "message": "Vector store is disabled because you are running on SQLite (local mode).",
+                "tasks_in_vectorstore": 0
+            })
+
+        # Get the count of documents
+        count = vectorstore._collection.count()
+
+        return Response({
+            "status": "active",
+            "vector_store": "pgvector",
+            "tasks_in_vectorstore": count,
+            "message": f"Currently {count} tasks are embedded in pgvector"
+        })
+
+    except Exception as e:
+        return Response({
+            "status": "error",
+            "message": str(e),
+            "tasks_in_vectorstore": 0
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 User = get_user_model()
 
