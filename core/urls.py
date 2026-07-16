@@ -1,6 +1,6 @@
 from rest_framework.routers import DefaultRouter
 from django.urls import path
-from .views import TaskViewSet, AskAIView, vectorstore_status, CreateSuperUserView, DeleteAllTasksView
+from .views import TaskViewSet, AskAIView, vectorstore_status, CreateSuperUserView, DeleteAllTasksView, ClearVectorstoreView
 
 router = DefaultRouter()
 router.register(r'tasks', TaskViewSet, basename='task')
@@ -10,5 +10,6 @@ urlpatterns = [
     path('create-superuser/', CreateSuperUserView.as_view(), name='create-superuser'),
     path('vectorstore-status/', vectorstore_status, name='vectorstore-status'),
     path('delete-all-tasks/', DeleteAllTasksView.as_view(), name='delete-all-tasks'),
-    
+    path('clear-vectorstore/', ClearVectorstoreView.as_view(), name='clear-vectorstore'),
+
 ] + router.urls
