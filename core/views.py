@@ -130,23 +130,22 @@ class CreateSuperUserView(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-#class DeleteAllTasksView(APIView):
-#    """
-#    Temporary view to delete ALL tasks.
-#    Use only once, then delete this view.
-#    """
-#    def post(self, request):
-#        secret_key = request.data.get("secret_key", "")
-#
-#        # Change this to something only you know
-#        if secret_key != "delete-all-tasks-2026":
-#           return Response({"error": "Invalid secret key"}, status=status.HTTP_403_FORBIDDEN)
+class DeleteAllTasksView(APIView):
+    """
+    Temporary view to delete ALL tasks from the database.
+    DELETE this view after you are done using it.
+    """
+    def post(self, request):
+        secret_key = request.data.get("secret_key", "")
 
-#        try:
-#            deleted_count, _ = Task.objects.all().delete()
-#            return Response({
-#                "message": f"Successfully deleted {deleted_count} tasks",
-#                "deleted_count": deleted_count
-#            }, status=status.HTTP_200_OK)
-#        except Exception as e:
-#            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # Change this secret key to something only you know
+        if secret_key != "delete-all-2026":
+            return Response({"error": "Invalid secret key"}, status=status.HTTP_403_FORBIDDEN)
+
+        from core.models import Task
+        deleted_count, _ = Task.objects.all().delete()
+
+        return Response({
+            "message": f"Successfully deleted {deleted_count} tasks",
+            "deleted_count": deleted_count
+        }, status=status.HTTP_200_OK)

@@ -36,7 +36,6 @@ class TaskSerializer(serializers.ModelSerializer):
             )
             validated_data['category'] = category
 
-        # Just create the task normally (no AI, no Chroma for now)
         task = super().create(validated_data)
         return task
     
