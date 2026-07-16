@@ -93,21 +93,18 @@ WSGI_APPLICATION = 'taskmanager_api.wsgi.application'
 DATABASE_URL = os.environ.get('DATABASE_URL')
 
 if DATABASE_URL:
+    # Production / Render (uses PostgreSQL)
+    import dj_database_url
+    
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=True,           # Good for Render/Neon
+        )
     }
-    
-    # Extra options for Neon.tech stability
-    DATABASES['default']['OPTIONS'] = {
-        'sslmode': 'require',
-        'connect_timeout': 10,
-    }
-    
 else:
-    # Fallback for local development
+    # Local Development → Use SQLite (simple & stable)
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
