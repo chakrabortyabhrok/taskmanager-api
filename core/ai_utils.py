@@ -6,7 +6,6 @@ from langchain_core.documents import Document
 
 load_dotenv()
 
-
 def get_ai_response(prompt: str, model: str = "gpt-4o-mini") -> str:
     try:
         client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
