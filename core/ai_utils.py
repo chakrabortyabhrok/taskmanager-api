@@ -19,7 +19,6 @@ def get_ai_response(prompt: str, model: str = "gpt-4o-mini") -> str:
     except Exception as e:
         return f"Error: {str(e)}"
 
-
 def generate_task_summary(task):
     prompt = f"""
     Summarize this task in 1-2 very short sentences:
@@ -33,6 +32,17 @@ def generate_task_summary(task):
         print(f"Error generating summary: {str(e)}")
         return ""
 
+def auto_categorize_tasks(title, description):
+    prompt = f"""
+    According to the title and description provided, recommend category for the user:
+    Title: {title}
+    Description: {description}
+    """
+    try:
+        return get_ai_response(prompt)
+    except Exception as e:
+        print(f"Error generating category: {str(e)}")
+        return ""
 
 def get_vectorstore():
     """
