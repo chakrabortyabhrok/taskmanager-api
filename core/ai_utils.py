@@ -32,11 +32,15 @@ def generate_task_summary(task):
         print(f"Error generating summary: {str(e)}")
         return ""
 
-def auto_categorize_tasks(title, description):
+def auto_categorize_task(title, description):
     prompt = f"""
-    According to the title and description provided, recommend category for the user:
+    According to the title and description provided, recommend category for the user:  
     Title: {title}
     Description: {description}
+
+    Rules:
+    - return in a fixed format (example: Category: Work)
+    - no extra sentenses or words. just in the fixed format
     """
     try:
         return get_ai_response(prompt)
