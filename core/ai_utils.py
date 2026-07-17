@@ -110,6 +110,7 @@ def ask_ai_about_tasks(question: str) -> str:
         - You are given only a partial list of the user's tasks (not all of them).
         - Base your answer only on the tasks provided below.
         - If the user asks for a count and you don't have all tasks, say so clearly.
+        - If no question given, say so politely.
         - Do not make up information.
 
         Relevant tasks:
