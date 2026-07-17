@@ -13,7 +13,7 @@ def get_ai_response(prompt: str, model: str = "gpt-4o-mini") -> str:
             model=model,
             messages=[{"role": "user", "content": prompt}],
             max_tokens=300,
-            temperature=0.7
+            temperature=0.5
         )
         return response.choices[0].message.content.strip()
     except Exception as e:
