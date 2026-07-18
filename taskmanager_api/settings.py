@@ -76,11 +76,15 @@ if DATABASE_URL:
         )
     }
 else:
-    # LOCAL DEVELOPMENT → SQLite (simple & reliable)
+    # LOCAL DEVELOPMENT → PostgreSQL
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'taskmanager-db',
+            'USER': 'chakraborty',
+            'PASSWORRD': 'Abhrok.c123',
+            'HOST': 'localhost',
+            'PORT': '5432'
         }
     }
 
