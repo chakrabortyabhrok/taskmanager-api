@@ -56,44 +56,44 @@ class TaskViewSet(ModelViewSet):
             kwargs['many'] = True
         return super().get_serializer(*args, **kwargs)
     
-@api_view(['GET'])
-def vectorstore_status(request):
-    """
-    Check how many tasks are currently stored in the vector database (pgvector).
-    """
-    try:
-        vectorstore = get_vectorstore()
+    @api_view(['GET'])
+    def vectorstore_status(request):
+        """
+        Check how many tasks are currently stored in the vector database (pgvector).
+        """
+        try:
+            vectorstore = get_vectorstore()
+ 
+            if vectorstore is None:
+                return Response({
+                    "status": "disabled",
+                    "message": "Vector store is disabled (you are running on SQLite).",
+                    "tasks_in_vectorstore": 0
+                })
 
-        if vectorstore is None:
+            # Correct way to count documents with PGVector
+            try:
+                # This is the most reliable way across versions
+                docs = vectorstore.similarity_search("task", k=1000)
+                count = len(docs)
+            except Exception:
+                count = 0
+
             return Response({
-                "status": "disabled",
-                "message": "Vector store is disabled (you are running on SQLite).",
-                "tasks_in_vectorstore": 0
+                "status": "active",
+                "vector_store": "pgvector",
+                "tasks_in_vectorstore": count,
+                "message": f"Currently {count} tasks are embedded in pgvector"
             })
 
-        # Correct way to count documents with PGVector
-        try:
-            # This is the most reliable way across versions
-            docs = vectorstore.similarity_search("task", k=1000)
-            count = len(docs)
-        except Exception:
-            count = 0
-
-        return Response({
-            "status": "active",
-            "vector_store": "pgvector",
-            "tasks_in_vectorstore": count,
-            "message": f"Currently {count} tasks are embedded in pgvector"
-        })
-
-    except Exception as e:
-        return Response({
-            "status": "error",
-            "message": str(e),
-            "tasks_in_vectorstore": 0
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            return Response({
+                "status": "error",
+                "message": str(e),
+                "tasks_in_vectorstore": 0
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-User = get_user_model()
+    User = get_user_model()
 
 class CreateSuperUserView(APIView):
     """
