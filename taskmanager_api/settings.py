@@ -80,9 +80,9 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'taskmanager-db',
+            'NAME': 'taskmanager_db',
             'USER': 'chakraborty',
-            'PASSWORRD': 'Abhrok.c123',
+            'PASSWORD': 'Abhrok.c123',
             'HOST': 'localhost',
             'PORT': '5432'
         }
