@@ -12,6 +12,7 @@ from rest_framework.decorators import api_view
 from django.db import connection
 from django.contrib.auth import get_user_model
 from .ai_utils import ask_ai_about_tasks, add_task_to_vectorstore, get_vectorstore
+import os
 
 
 class AskAIView(APIView):
@@ -55,25 +56,18 @@ class TaskViewSet(ModelViewSet):
         if isinstance(kwargs.get('data'), list):
             kwargs['many'] = True
         return super().get_serializer(*args, **kwargs)
-    
+
 @api_view(['GET'])
 def vectorstore_status(request):
     """
-    Check how many tasks are currently stored in the vector database (pgvector).
+    Check the current vector store and how many tasks are embedded.
     """
     try:
         vectorstore = get_vectorstore()
+        store_type = "pgvector" if os.environ.get("DATABASE_URL") else "chroma"
 
-        if vectorstore is None:
-            return Response({
-                "status": "disabled",
-                "message": "Vector store is disabled (you are running on SQLite).",
-                "tasks_in_vectorstore": 0
-            })
-
-        # Correct way to count documents with PGVector
+        # Count documents
         try:
-            # This is the most reliable way across versions
             docs = vectorstore.similarity_search("task", k=1000)
             count = len(docs)
         except Exception:
@@ -81,9 +75,9 @@ def vectorstore_status(request):
 
         return Response({
             "status": "active",
-            "vector_store": "pgvector",
+            "vector_store": store_type,
             "tasks_in_vectorstore": count,
-            "message": f"Currently {count} tasks are embedded in pgvector"
+            "message": f"Currently {count} tasks are embedded in {store_type}"
         })
 
     except Exception as e:

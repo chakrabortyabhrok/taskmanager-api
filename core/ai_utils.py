@@ -50,34 +50,40 @@ def auto_categorize_task(title, description):
 
 def get_vectorstore():
     """
-    Smart vectorstore:
-    - On Render (has DATABASE_URL) → uses PGVector (PostgreSQL)
-    - Locally (SQLite) → returns None (embedding is skipped)
+    Hybrid Vector Store:
+    - Render (has DATABASE_URL) → PGVector
+    - Local → Chroma
     """
-    connection_string = os.environ.get("DATABASE_URL")
-
-    if not connection_string:
-        # Running locally with SQLite → no pgvector available
-        print("⚠️  Running on SQLite. Vector store is disabled (pgvector needs PostgreSQL).")
-        return None
-
-    from langchain_postgres import PGVector
+    from langchain_openai import OpenAIEmbeddings
+    import os
 
     embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+    connection_string = os.environ.get("DATABASE_URL")
 
-    vectorstore = PGVector(
-        embeddings=embeddings,
-        collection_name="task_embeddings",
-        connection=connection_string,
-        use_jsonb=True,
+    # ========== Production (Render) ==========
+    if connection_string:
+        from langchain_postgres import PGVector
+        return PGVector(
+            embeddings=embeddings,
+            collection_name="task_embeddings",
+            connection=connection_string,
+            use_jsonb=True,
+        )
+
+    # ========== Local Development (Chroma) ==========
+    from langchain_chroma import Chroma
+    return Chroma(
+        persist_directory="chroma_db",
+        embedding_function=embeddings,
+        collection_name="task_embeddings"
     )
-    return vectorstore
 
 
 def add_task_to_vectorstore(task):
     """
     Adds task to vector store only if PostgreSQL is available.
     """
+    print(f">>> Embedding task ID: {task.id} | Title: {task.title}")
     vectorstore = get_vectorstore()
 
     if vectorstore is None:

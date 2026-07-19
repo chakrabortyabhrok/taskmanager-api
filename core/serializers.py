@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Task, Category
 from core.ai_utils import generate_task_summary, add_task_to_vectorstore, auto_categorize_task
 
+
 class TaskSerializer(serializers.ModelSerializer):
     """ Serializer for Task model with custom category handling and AI summary. """
     category = serializers.CharField(
@@ -63,9 +64,11 @@ class TaskSerializer(serializers.ModelSerializer):
         try:
             task.ai_summary = generate_task_summary(task)
             task.save(update_fields=['ai_summary'])
+            
         except Exception as e:
             print(f"AI Summary failed: {e}")
-
+        
+        add_task_to_vectorstore(task)
         return task
                
     def update(self, instance, validated_data):
@@ -86,14 +89,13 @@ class TaskSerializer(serializers.ModelSerializer):
         try:
             task.ai_summary = generate_task_summary(task)
             task.save(update_fields=['ai_summary'])
-            add_task_to_vectorstore(task)
 
         except Exception as e:
             print(f"AI Summary failed for task {task.id}: {e}")
             
         # task.ai_summary = generate_task_summary(task)
         # task.save(update_fields=['ai_summary'])
-
+        add_task_to_vectorstore(task)
         return task
 
     def to_representation(self, instance):
