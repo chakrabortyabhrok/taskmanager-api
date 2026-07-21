@@ -1,9 +1,10 @@
-from rest_framework.viewsets import ModelViewSet
+import os
 from .models import Task
-from .serializers import TaskSerializer
+from .serializers import TaskSerializer, AuthSerializer
 from .filters import TaskFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.views import APIView
@@ -12,7 +13,7 @@ from rest_framework.decorators import api_view
 from django.db import connection
 from django.contrib.auth import get_user_model
 from .ai_utils import ask_ai_about_tasks, add_task_to_vectorstore, get_vectorstore
-import os
+from rest_framework.permissions import AllowAny
 
 
 class AskAIView(APIView):
@@ -124,48 +125,74 @@ class CreateSuperUserView(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-class DeleteAllTasksView(APIView):
-    """
-    Temporary view to delete ALL tasks from the database.
-    DELETE this view after you are done using it.
-    """
+
+class RegisterView(APIView):
+    # Overriding global IsAuthenticated setting so anyone can register
+    permission_classes = [AllowAny]
+
     def post(self, request):
-        secret_key = request.data.get("secret_key", "")
+        serializer = AuthSerializer(data=request.data)
 
-        # Change this secret key to something only you know
-        if secret_key != "delete-all-2026":
-            return Response({"error": "Invalid secret key"}, status=status.HTTP_403_FORBIDDEN)
+        if serializer.is_valid():
+            user = serializer.save()
 
-        from core.models import Task
-        deleted_count, _ = Task.objects.all().delete()
+            return Response(
+                {
+                    "message": "User registered successfully. ",
+                    "user": {
+                        "id": user.id,
+                        "username": user.username,
+                        "email": user.email
+                    }
+                },
+                status=status.HTTP_201_CREATED
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response({
-            "message": f"Successfully deleted {deleted_count} tasks",
-            "deleted_count": deleted_count
-        }, status=status.HTTP_200_OK)
+
+
+#class DeleteAllTasksView(APIView):
+    #"""
+#    Temporary view to delete ALL tasks from the database.
+#    DELETE this view after you are done using it.
+#    """
+#    def post(self, request):
+#        secret_key = request.data.get("secret_key", "")
+
+#        # Change this secret key to something only you know
+#        if secret_key != "delete-all-2026":
+#            return Response({"error": "Invalid secret key"}, status=status.HTTP_403_FORBIDDEN)
+
+#        from core.models import Task
+#        deleted_count, _ = Task.objects.all().delete()
+
+#        return Response({
+#            "message": f"Successfully deleted {deleted_count} tasks",
+#            "deleted_count": deleted_count
+#        }, status=status.HTTP_200_OK)
     
-class ClearVectorstoreView(APIView):
-    """
-    Temporary view to completely clear the pgvector collection.
-    DELETE this view after use.
-    """
-    def post(self, request):
-        secret_key = request.data.get("secret_key", "")
+#class ClearVectorstoreView(APIView):
+#    """
+#    Temporary view to completely clear the pgvector collection.
+#    DELETE this view after use.
+#    """
+#    def post(self, request):
+#        secret_key = request.data.get("secret_key", "")
 
-        if secret_key != "clear-vectorstore-2026":
-            return Response({"error": "Invalid secret key"}, status=status.HTTP_403_FORBIDDEN)
+#        if secret_key != "clear-vectorstore-2026":
+#            return Response({"error": "Invalid secret key"}, status=status.HTTP_403_FORBIDDEN)
 
-        from core.ai_utils import clear_vectorstore
+#        from core.ai_utils import clear_vectorstore
 
-        success = clear_vectorstore()
+#        success = clear_vectorstore()
 
-        if success:
-            return Response({
-                "message": "Vector store cleared successfully",
-                "status": "cleared"
-            }, status=status.HTTP_200_OK)
-        else:
-            return Response({
-                "message": "Failed to clear vector store (maybe running on SQLite or error occurred)",
-                "status": "failed"
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+#        if success:
+#            return Response({
+#                "message": "Vector store cleared successfully",
+#                "status": "cleared"
+#            }, status=status.HTTP_200_OK)
+#        else:
+#            return Response({
+#                "message": "Failed to clear vector store (maybe running on SQLite or error occurred)",
+#                "status": "failed"
+#            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
