@@ -1,0 +1,31 @@
+# Virtual Environments
+env/
+venv/
+.venv/
+
+# Python Bytecode & Cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Git & Version Control
+.git/
+.gitignore
+
+# Environment & Secrets
+.env
+
+# Local Databases & Vector Stores
+db.sqlite3
+chroma_db/
+
+# Test Caches
+.pytest_cache/
+
+# Static Files
+staticfiles/
+
+# IDE & OS Settings
+.vscode/
+.DS_Store
