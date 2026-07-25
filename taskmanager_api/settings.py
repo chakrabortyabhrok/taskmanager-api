@@ -68,7 +68,7 @@ WSGI_APPLICATION = 'taskmanager_api.wsgi.application'
 DATABASE_URL = os.environ.get('DATABASE_URL')
 
 if DATABASE_URL:
-    # PRODUCTION (Render) → PostgreSQL
+    # PRODUCTION (Render)
     DATABASES = {
         'default': dj_database_url.config(
             default=DATABASE_URL,
@@ -77,15 +77,15 @@ if DATABASE_URL:
         )
     }
 else:
-    # LOCAL DEVELOPMENT → PostgreSQL
+    # LOCAL DEVELOPMENT
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'taskmanager_db',
-            'USER': 'chakraborty',
-            'PASSWORD': 'Abhrok.c123',
-            'HOST': 'localhost',
-            'PORT': '5432'
+            'ENGINE': os.environ.get('DB_ENGINE', 'django.db.backends.postgresql'),
+            'NAME': os.environ.get('DB_NAME', 'taskmanager_db'),
+            'USER': os.environ.get('DB_USER', 'chakraborty'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', 'Abhrok.c123'),
+            'HOST': os.environ.get('DB_HOST', 'localhost'),
+            'PORT': os.environ.get('DB_PORT', '5432'),
         }
     }
 
