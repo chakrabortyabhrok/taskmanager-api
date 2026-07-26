@@ -17,10 +17,11 @@ services:
       - ALLOWED_HOSTS=${ALLOWED_HOSTS}
     depends_on:
       - db
-
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     volumes:
       - .:/app
-
     networks:
       - taskmanager-network
 
