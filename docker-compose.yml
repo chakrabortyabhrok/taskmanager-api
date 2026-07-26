@@ -17,6 +17,10 @@ services:
       - ALLOWED_HOSTS=${ALLOWED_HOSTS}
     depends_on:
       - db
+
+    volumes:
+      - .:/app
+
     networks:
       - taskmanager-network
 
@@ -31,6 +35,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      
     networks:
       - taskmanager-network
 
