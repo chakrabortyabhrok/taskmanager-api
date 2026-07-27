@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 from langchain_openai import OpenAIEmbeddings
 from langchain_core.documents import Document
+from langchain_postgres import PGVector
 
 load_dotenv()
 
@@ -50,45 +51,40 @@ def auto_categorize_task(title, description):
 
 def get_vectorstore():
     """
-    Hybrid Vector Store:
-    - Render (has DATABASE_URL) → PGVector
-    - Local → PGVector
+    Always use PGVector (PostgreSQL) for both local and production.
     """
     #from langchain_openai import OpenAIEmbeddings
     #import os
 
     embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+
+    # Prefer DATABASE_URL if available (Render)
     connection_string = os.environ.get("DATABASE_URL")
 
-    # ========== Production (Render) ==========
-    if connection_string:
-        from langchain_postgres import PGVector
-        return PGVector(
-            embeddings=embeddings,
-            collection_name="task_embeddings",
-            connection=connection_string,
-            use_jsonb=True,
-        )
+    if not connection_string:
+        # Build local connection string from environment variables
+        db_name = os.environ.get("DB_NAME", "taskmanager_db")
+        db_user = os.environ.get("DB_USER", "newuser123")
+        db_password = os.environ.get("DB_PASSWORD", "")
+        db_host = os.environ.get("DB_HOST", "localhost")
+        db_port = os.environ.get("DB_PORT", "5432")
 
-    # ========== Local Development (Chroma) ==========
-    #from langchain_chroma import Chroma
-    #return Chroma(
-    #    persist_directory="chroma_db",
-    #    embedding_function=embeddings,
-    #    collection_name="task_embeddings"
-    #)
+        connection_string = f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
 
+    return PGVector(
+        embeddings=embeddings,
+        collection_name="task_embeddings",
+        connection=connection_string,
+        use_jsonb=True,
+    )
 
 def add_task_to_vectorstore(task):
     """
-    Adds task to vector store only if PostgreSQL is available.
+    Adds a task to the PGVector store (PostgreSQL).
     """
     print(f">>> Embedding task ID: {task.id} | Title: {task.title}")
-    vectorstore = get_vectorstore()
 
-    if vectorstore is None:
-        # Local SQLite mode → skip embedding
-        return
+    vectorstore = get_vectorstore()
 
     page_content = (
         f"Task Title: {task.title}. "
@@ -106,7 +102,6 @@ def add_task_to_vectorstore(task):
 
     document = Document(page_content=page_content, metadata=metadata)
     vectorstore.add_documents([document])
-
 
 def ask_ai_about_tasks(question: str) -> str:
     try:

@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.db import connection
 from django.contrib.auth import get_user_model
-from .ai_utils import ask_ai_about_tasks, add_task_to_vectorstore, get_vectorstore
+from .ai_utils import ask_ai_about_tasks, get_vectorstore
 from rest_framework.permissions import AllowAny
 
 
