@@ -65,7 +65,7 @@ def vectorstore_status(request):
     """
     try:
         vectorstore = get_vectorstore()
-        store_type = "pgvector" if os.environ.get("DATABASE_URL") else "chroma"
+        store_type = "pgvector" if os.environ.get("DATABASE_URL") else "no store type"
 
         # Count documents
         try:

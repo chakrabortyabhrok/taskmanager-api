@@ -52,10 +52,10 @@ def get_vectorstore():
     """
     Hybrid Vector Store:
     - Render (has DATABASE_URL) → PGVector
-    - Local → Chroma
+    - Local → PGVector
     """
-    from langchain_openai import OpenAIEmbeddings
-    import os
+    #from langchain_openai import OpenAIEmbeddings
+    #import os
 
     embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
     connection_string = os.environ.get("DATABASE_URL")
@@ -71,12 +71,12 @@ def get_vectorstore():
         )
 
     # ========== Local Development (Chroma) ==========
-    from langchain_chroma import Chroma
-    return Chroma(
-        persist_directory="chroma_db",
-        embedding_function=embeddings,
-        collection_name="task_embeddings"
-    )
+    #from langchain_chroma import Chroma
+    #return Chroma(
+    #    persist_directory="chroma_db",
+    #    embedding_function=embeddings,
+    #    collection_name="task_embeddings"
+    #)
 
 
 def add_task_to_vectorstore(task):
