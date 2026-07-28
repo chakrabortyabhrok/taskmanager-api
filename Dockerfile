@@ -14,7 +14,7 @@ ENV PYTHONUNBUFFERED=1 \
 WORKDIR /app
 
 # Install System Dependencies
-# libpq-dev and gcc are needed if you are using PostgreSQL (psycopg2)
+# libpq-dev and gcc are needed if using PostgreSQL (psycopg2)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     libpq-dev \
@@ -36,7 +36,6 @@ COPY . /app/
 # Expose the port to Gunicorn
 EXPOSE 8000
 
-# Default Command: Start the app with Gunicorn
-# Replace 'taskmanager_api.wsgi:application' with 'YOUR_PROJECT_NAME.wsgi:application'
+# Default Command: Start app with Gunicorn
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "taskmanager_api.wsgi:application"]
 

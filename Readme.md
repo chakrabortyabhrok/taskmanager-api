@@ -17,7 +17,8 @@ A RESTful API built with Django and Django REST Framework that allows users to m
 - Django REST Framework
 - OpenAI API (gpt-4o-mini)
 - PostgreSQL (Production)
-- SQLite (Development)
+- PostgreSQL (Development)
+- PGgvector (RAG / Embedding)
 
 ## Local Setup
 
