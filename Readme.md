@@ -136,48 +136,70 @@ cd taskmanager-api
     "refresh": "<your_refresh_token>"
   }
   ```
-  API Endpoints
-  Tasks
-  Method,Endpoint,Description,Auth Required
-  GET,/api/tasks/,List all tasks,Yes
-  POST,/api/tasks/,Create a new task,Yes
-  GET,/api/tasks/{id}/,Retrieve a single task,Yes
-  PUT,/api/tasks/{id}/,Update a task (full),Yes
-  PATCH,/api/tasks/{id}/,Partial update,Yes
-  DELETE,/api/tasks/{id}/,Delete a task,Yes
-  POST,/api/tasks/ask_ai/,Ask questions about tasks,Yes
   
-### 3. Install dependencies
-```bash
-pip install -r requirements.txt
-```
+  ---
+  ## API Endpoints
+  Tasks
+  | Method | Endpoint | Description | Auth Required |
+  |--------|----------|-------------|---------------|
+  | `GET` | `/api/tasks/` | List all tasks | Yes |
+  | `POST` | `/api/tasks/` | Create a new task | Yes |
+  | `GET` | `/api/tasks/{id}/` | Retrieve a single task | Yes |
+  | `PUT` | `/api/tasks/{id}/` | Update a task (full) | Yes |
+  | `PATCH` | `/api/tasks/{id}/` | Partial update | Yes |
+  | `DELETE` | `/api/tasks/{id}/` | Delete a task | Yes |
+  | `POST` | `/api/tasks/ask_ai/` | Ask questions about tasks | Yes |
+  ---
 
-### 4. Setup Environment Variables
+  Filtering & Search Examples
+  
+  ```bash
+  GET /api/tasks/?status=todo
+  GET /api/tasks/?category=Work
+  GET /api/tasks/?search=meeting
+  GET /api/tasks/?ordering=-created_at
+  GET /api/tasks/?page=2
+  ```
+  AI Features
+  1. AI Task Summarization
+     When a task is created or updated, an AI-generated summary is automatically stored in the ai_summary field.
+  2. Natural Language Queries
+     You can ask questions about your tasks in plain English:
+     
+     ```bash
+     POST /api/tasks/ask_ai/
+     Authorization: Bearer <token>
+     Content-Type: application/json
 
-- Create a .env file in the project root and add the following:
+     {
+       "question": "Which tasks are currently in progress?"
+     }
+     ```
+  3. Auto-Categorization
+     When creating a task, the system can automatically suggest a suitable category using AI.
+     
+     Environment Variables
 
-```bash
-DEBUG=True
-SECRET_KEY=your-secret-key-here
-OPENAI_API_KEY=sk-proj-xxxxxxxxxxxxxxxxxxxxxxxx
-```
-### 5. Run Migrations
+    | Variable | Description | Required |
+    |----------|-------------|----------|
+    | `SECRET_KEY` | Django secret key | Yes |
+    | `DEBUG` | Debug mode (`True` / `False`) | Yes |
+    | `ALLOWED_HOSTS` | Comma-separated list of allowed hosts | Yes |
+    | `POSTGRES_DB` | PostgreSQL database name | Yes |
+    | `POSTGRES_USER` | PostgreSQL username | Yes |
+    | `POSTGRES_PASSWORD` | PostgreSQL password | Yes |
+    | `OPENAI_API_KEY` | OpenAI API key | Yes |
 
-```bash
-python manage.py migrate
-```
+## Future Improvements
 
-### 6. Create superuser (optional)
+  - User-specific tasks (task ownership)
+  - Role-based permissions
+  - Rate limiting on AI endpoints
+  - Caching AI responses
+  - Frontend dashboard with React
+  - Automated tests with higher coverage
+  - CI/CD pipeline
 
-```bash
-python manage.py createsuperuser
-```
-
-### 7. Run the server
-
-```bash
-python manage.py runserver
-```
-
-
-
+## Author
+### Abhrok Chakraborty
+Self-taught developer focused on building production-ready backend systems with Django, DRF, and AI integration.
