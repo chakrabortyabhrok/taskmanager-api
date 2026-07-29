@@ -49,20 +49,22 @@ taskmanager-api/
 ├── requirements.txt
 ├── .env.example
 └── manage.py
+```
 
 ### 1. Clone the repository
 
 ```bash
-git clone <https://github.com/chakrabortyabhrok/taskmanager-api.git>
+git clone https://github.com/chakrabortyabhrok/taskmanager-api.git
 cd taskmanager-api
 ```
 
-### 2. Create virtual environment
+### 2. Environment Variables
+- Create a .env file in the root directory:
 
-```bash
-python -m venv env
-source env/bin/activate          
-```
+    ```bash
+    python -m venv env
+    source env/bin/activate          
+    ```
 
 ### 3. Install dependencies
 
