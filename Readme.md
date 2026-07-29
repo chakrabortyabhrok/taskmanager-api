@@ -203,3 +203,6 @@ cd taskmanager-api
 ## Author
 ### Abhrok Chakraborty
 Self-taught developer focused on building production-ready backend systems with Django, DRF, and AI integration.
+
+## License
+This project is open source and available under the MIT License.
