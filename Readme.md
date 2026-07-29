@@ -1,26 +1,54 @@
 # Task Manager API
 
-A RESTful API built with Django and Django REST Framework that allows users to manage tasks with AI-powered features.
+A production-ready RESTful API for managing tasks, built with Django and Django REST Framework.  
+The project includes JWT authentication, advanced filtering, AI-powered features, and full Docker support.
+
+**Live Demo:** [https://taskmanager-api-d57o.onrender.com](https://taskmanager-api-d57o.onrender.com)
+
+---
 
 ## Features
 
-- CRUD operations for Tasks
-- Category management
-- Filtering, searching, and ordering support
-- AI-generated task summaries (using OpenAI)
-- Natural language query endpoint (ask questions about your tasks in plain English)
+- Full CRUD operations for Tasks
+- Category management with ForeignKey relationship
+- JWT Authentication (Register, Login, Token Refresh)
+- Filtering by status and category
+- Search functionality
+- Pagination
+- AI Task Summarization (OpenAI)
+- Natural Language Query endpoint (`/api/tasks/ask_ai/`)
+- Auto-categorization of tasks using AI
+- PostgreSQL database
+- Fully Dockerized (Docker + Docker Compose)
+- Environment-based configuration
+
+---
 
 ## Tech Stack
 
-- Python
-- Django
-- Django REST Framework
-- OpenAI API (gpt-4o-mini)
-- PostgreSQL (Production)
-- PostgreSQL (Development)
-- PGgvector (RAG / Embedding)
+| Category          | Technology                          |
+|-------------------|-------------------------------------|
+| Backend           | Django 6, Django REST Framework     |
+| Authentication    | djangorestframework-simplejwt       |
+| Database          | PostgreSQL                          |
+| AI                | OpenAI API (gpt-4o-mini)            |
+| Containerization  | Docker, Docker Compose              |
+| Filtering         | django-filter                       |
+| Server            | Gunicorn                            |
 
-## Local Setup
+---
+
+## Project Structure
+
+```bash
+taskmanager-api/
+├── core/                  # Main app (models, views, serializers, AI utils)
+├── taskmanager_api/       # Project settings and URLs
+├── Dockerfile
+├── docker-compose.yml
+├── requirements.txt
+├── .env.example
+└── manage.py
 
 ### 1. Clone the repository
 
