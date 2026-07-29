@@ -139,6 +139,7 @@ cd taskmanager-api
   
   ---
   ## API Endpoints
+  "Look for (Api.md) file in the root of the project, for more detailed API Documentation"
   Tasks
   | Method | Endpoint | Description | Auth Required |
   |--------|----------|-------------|---------------|
