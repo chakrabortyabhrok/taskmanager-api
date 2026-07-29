@@ -4,6 +4,7 @@ from openai import OpenAI
 from langchain_openai import OpenAIEmbeddings
 from langchain_core.documents import Document
 from langchain_postgres import PGVector
+from urllib import parse
 
 load_dotenv()
 
@@ -53,23 +54,21 @@ def get_vectorstore():
     """
     Always use PGVector (PostgreSQL) for both local and production.
     """
-    #from langchain_openai import OpenAIEmbeddings
-    #import os
 
     embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
 
-    # Prefer DATABASE_URL if available (Render)
     connection_string = os.environ.get("DATABASE_URL")
 
     if not connection_string:
-        # Build local connection string from environment variables
+        """ Build local connection string from environment variables"""
+
         db_name = os.environ.get("DB_NAME", "taskmanager_db")
         db_user = os.environ.get("DB_USER", "newuser123")
-        db_password = os.environ.get("DB_PASSWORD", "")
-        db_host = os.environ.get("DB_HOST", "localhost")
+        db_password = parse.quote_plus(os.environ.get("DB_PASSWORD", ""))
+        db_host = os.environ.get("DB_HOST", "db")
         db_port = os.environ.get("DB_PORT", "5432")
 
-        connection_string = f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
+        connection_string = f"postgresql+psycopg://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
 
     return PGVector(
         embeddings=embeddings,
@@ -140,12 +139,12 @@ def ask_ai_about_tasks(question: str) -> str:
     except Exception as e:
         print("Error in ask_ai_about_tasks:", e)
         return f"Sorry, something went wrong. Error: {str(e)}"
-    
+
+"""
 def clear_vectorstore():
-    """
-    Completely clears all documents from the pgvector collection.
-    Use this carefully.
-    """
+    
+    "Completely clears all documents from the pgvector collection.To be used only if needed ."
+    
     vectorstore = get_vectorstore()
 
     if vectorstore is None:
@@ -160,3 +159,4 @@ def clear_vectorstore():
     except Exception as e:
         print(f"Error while clearing vector store: {e}")
         return False
+"""

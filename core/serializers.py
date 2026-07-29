@@ -12,8 +12,6 @@ class TaskSerializer(serializers.ModelSerializer):
         allow_null=True
     )
 
-    #ai_summary = serializers.CharField(read_only=True)
-
     class Meta:
         model = Task
         fields = [
@@ -29,19 +27,19 @@ class TaskSerializer(serializers.ModelSerializer):
         ]
     
     def create(self, validated_data):
-         # Get title and description
+        """ Get title and description """
         title = validated_data.get('title', '')
         description = validated_data.get('description', '')
 
-        # Get AI suggestion
+        """ Get AI suggestion """
         suggestion = auto_categorize_task(title, description)
     
         category_name = None
   
-        # Safely extract category from AI response
+        """ Safely extract category from AI response """
         if suggestion:
             try:
-                # Expected format: "Category: Work, Priority: High"
+                """ Expected format: (Category: Work, Priority: High) """
                 parts = suggestion.split(',')
                 for part in parts:
                     if 'Category:' in part:
@@ -50,7 +48,7 @@ class TaskSerializer(serializers.ModelSerializer):
             except Exception:
                 category_name = None
 
-        # If AI gave a category, use it
+        """ If AI gave a category, use it """
         if category_name:
             category, created = Category.objects.get_or_create(
                 name=category_name,
@@ -58,10 +56,10 @@ class TaskSerializer(serializers.ModelSerializer):
             )
             validated_data['category'] = category
 
-        # Create the task
+        """ Create the task """
         task = super().create(validated_data)
 
-        # Generate AI summary (keep your existing logic)
+        """ Generate AI summary (keep your existing logic) """
         try:
             task.ai_summary = generate_task_summary(task)
             task.save(update_fields=['ai_summary'])
@@ -73,6 +71,7 @@ class TaskSerializer(serializers.ModelSerializer):
         return task
                
     def update(self, instance, validated_data):
+
         """Handle category update + regenerate AI summary after task is updated."""
         category_name = validated_data.pop('category', None)
 
