@@ -62,12 +62,92 @@ cd taskmanager-api
 - Create a .env file in the root directory:
 
     ```bash
-    python -m venv env
-    source env/bin/activate          
+    # Django
+    SECRET_KEY=your-secret-key-here
+    DEBUG=True
+    ALLOWED_HOSTS=localhost,127.0.0.1
+
+    # PostgreSQL
+    POSTGRES_DB=taskmanager_db
+    POSTGRES_USER=your_db_user
+    POSTGRES_PASSWORD=your_strong_password
+
+    # OpenAI
+    OPENAI_API_KEY=sk-your-openai-key          
     ```
+    Note: Never commit the real .env file. A .env.example is provided.
+  ### Running the Project
+  Option 1: Using Docker (Recommended)
+  ```bash
+  docker compose up --build
+  ```
+  The API will probably be available at: http://localhost:8000
 
+  Option 2: Local Development
+  ```bash
+  python -m venv env
+  source env/bin/activate          # Windows: env\Scripts\activate
+  pip install -r requirements.txt
+  python manage.py migrate
+  python manage.py createsuperuser
+  python manage.py runserver
+  ```
+  ###Authentication
+  The API uses JWT Authentication.
+  Register
+  ```bash
+  POST /api/auth/register/
+  Content-Type: application/json
+
+  {
+    "username": "testuser",
+    "email": "test@example.com",
+    "password": "strongpassword123"
+  }
+  ```
+  Login
+  ```bash
+  POST /api/auth/login/
+  Content-Type: application/json
+
+  {
+    "username": "testuser",
+    "password": "strongpassword123"
+  }
+  ```
+  Response:
+  ```bash
+  {
+  "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  }
+  ```
+  Using the Access Token
+  Add the token in the header of protected requests:
+  ```bash
+  Authorization: Bearer <your_access_token>
+  ```
+  Refresh Token
+  ```bash
+  POST /api/auth/token/refresh/
+  Content-Type: application/json
+
+  {
+    "refresh": "<your_refresh_token>"
+  }
+  ```
+  API Endpoints
+  Tasks
+  Method,Endpoint,Description,Auth Required
+  GET,/api/tasks/,List all tasks,Yes
+  POST,/api/tasks/,Create a new task,Yes
+  GET,/api/tasks/{id}/,Retrieve a single task,Yes
+  PUT,/api/tasks/{id}/,Update a task (full),Yes
+  PATCH,/api/tasks/{id}/,Partial update,Yes
+  DELETE,/api/tasks/{id}/,Delete a task,Yes
+  POST,/api/tasks/ask_ai/,Ask questions about tasks,Yes
+  
 ### 3. Install dependencies
-
 ```bash
 pip install -r requirements.txt
 ```
