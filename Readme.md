@@ -51,32 +51,102 @@ taskmanager-api/
 └── manage.py
 ```
 
-### 1. Clone the repository
+## Getting Started
+
+### Prerequisites
+
+- Python 3.12+
+- PostgreSQL
+- Docker & Docker Compose (for containerized setup)
+- Git
+
+---
+
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/chakrabortyabhrok/taskmanager-api.git
 cd taskmanager-api
 ```
-
 ### 2. Environment Variables
-- Create a .env file in the root directory:
+Copy the example environment file and update the values:
+```bash
+Bashcp .env.example .env
+```
+Edit the .env file with your own values.
+# Option A: Local Development Setup
+Step 1: Create Virtual Environment
+```Bash
+python -m venv env
+source env/bin/activate        # On Windows: env\Scripts\activate
+```
+Step 2: Install Dependencies
+```Bash
+pip install -r requirements.txt
+```
+Step 3: Set up PostgreSQL
+Make sure PostgreSQL is running and create a database and user matching the values in your .env file.
 
-    ```bash
-    # Django
-    SECRET_KEY=your-secret-key-here
-    DEBUG=True
-    ALLOWED_HOSTS=localhost,127.0.0.1
+Step 4: Run Migrations
+```Bash
+python manage.py migrate
+```
+Step 5: Create Superuser
+```Bash
+python manage.py createsuperuser
+```
+Step 6: Start the Development Server
+```Bash
+python manage.py runserver
+```
+The API will be available at: http://127.0.0.1:8000
 
-    # PostgreSQL
-    POSTGRES_DB=taskmanager_db
-    POSTGRES_USER=your_db_user
-    POSTGRES_PASSWORD=your_strong_password
+## Option B: Docker Setup (Recommended)
+Step 1: Make sure Docker is running
+```Bash
+docker --version
+docker compose version
+```
+Step 2: Create .env file
+```Bash
+cp .env.example .env
+```
+Update the values in .env.
 
-    # OpenAI
-    OPENAI_API_KEY=sk-your-openai-key          
-    ```
-    Note: Never commit the real .env file. A .env.example is provided.
-  ### Running the Project
+Step 3: Build and Start the Containers
+```Bash
+docker compose up --build
+```
+Or run in detached mode:
+```Bash
+docker compose up --build -d
+```
+Step 4: Run Migrations (if needed)
+```Bash
+docker compose exec web python manage.py migrate
+```
+Step 5: Create Superuser (optional)
+```Bash
+docker compose exec web python manage.py createsuperuser
+```
+Step 6: Access the Application
+- API: http://localhost:8000
+- Admin Panel: http://localhost:8000/admin
+
+Useful Docker Commands
+```bash
+# View logs
+docker compose logs -f
+# Stop containers
+docker compose down
+# Stop and remove volumes (⚠️ deletes database data)
+docker compose down -v
+```
+
+## " After setting up the Prerequisites, CREATE A '.env' file in your main project's root. " 
+## " -> (TAKE A LOOK IN THE '.env.example' file placed in the root of this project) "
+
+### Running the Project
   Option 1: Using Docker (Recommended)
   ```bash
   docker compose up --build
@@ -92,7 +162,7 @@ cd taskmanager-api
   python manage.py createsuperuser
   python manage.py runserver
   ```
-  ###Authentication
+### Authentication
   The API uses JWT Authentication.
   Register
   ```bash
@@ -138,7 +208,7 @@ cd taskmanager-api
   ```
   
   ---
-  ## API Endpoints
+## API Endpoints
   ### " Look into (Api.md) file in the root of the project, for more detailed API Documentation. "
   Tasks
   | Method | Endpoint | Description | Auth Required |
