@@ -71,10 +71,12 @@ cd taskmanager-api
 ### 2. Environment Variables
 Copy the example environment file and update the values:
 ```bash
-Bashcp .env.example .env
+cp .env.example .env
 ```
-Edit the .env file with your own values.
-# Option A: Local Development Setup
+--> " Or copy it manualy from the '.env.example' file placed in the root of this project. "
+And edit the .env file with your own values.
+
+## Option A: Local Development Setup
 Step 1: Create Virtual Environment
 ```Bash
 python -m venv env

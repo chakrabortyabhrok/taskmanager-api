@@ -11,3 +11,4 @@ urlpatterns = [
     path('create-superuser/', CreateSuperUserView.as_view(), name='create-superuser'),
     path('vectorstore-status/', vectorstore_status, name='vectorstore-status'),
 ] + router.urls
+
