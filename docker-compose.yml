@@ -1,6 +1,7 @@
 services:
   web:
     build: .
+    restart: unless-stopped
     command: python manage.py runserver 0.0.0.0:8000
     ports:
       - "8000:8000"
@@ -20,7 +21,6 @@ services:
         condition: service_healthy
     volumes:
       - .:/app
-    restart: unless-stopped
     networks:
       - taskmanager-network
 
