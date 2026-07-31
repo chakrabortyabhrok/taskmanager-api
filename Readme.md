@@ -263,6 +263,26 @@ docker compose down -v
     | `POSTGRES_PASSWORD` | PostgreSQL password | Yes |
     | `OPENAI_API_KEY` | OpenAI API key | Yes |
 
+## Screenshots
+
+  ### Tasks List
+  ![Tasks List](screenshots/01-tasks-list.png)
+
+  ### Single Task Detail
+  ![Single Task Detail](screenshots/02-task-detail.png)
+
+  ### Login Success
+  ![Login Success](screenshots/03-login.png)
+
+  ### AI Natural Language Query
+  ![AI Natural Language Query](screenshots/04-ask-ai.png)
+
+  ### Filtering and Search
+  ![Filtering Example](screenshots/05-filtering.png)
+
+  ### Docker Containers Running
+  ![Docker Containers Running](screenshots/06-docker.png)
+
 ## Future Improvements
 
   - User-specific tasks (task ownership)
