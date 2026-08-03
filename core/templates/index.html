@@ -1,49 +1,55 @@
+{% load static %}
+
 <!DOCTYPE html>
     <html>
         <head> 
+            <meta charset='UTF-8' />
+            <meta name='viewport' content='width=device-width'>
             <title>Task Manager Homepage</title> 
+            <link rel="stylesheet" href="{% static 'styles.css' %}">
         </head>
 
         <body>
-            <header> 
-                <h1>TASK MANAGER</h1>
-            </header>
+            <div>
+                <header> 
+                    <h1 class="test">TASK MANAGER</h1>
+                </header>
 
-            <main>
-                <section> 
-                    <h2> Add Tasks </h2>
-                    <form>
-                        <label> Title : </label>
-                        <input name="title"><br>
-                        <label> Decription : </label>
-                        <input name="description"><br>
-                        <label> Status : </label>
-                        <input name="status" ><br>
-                        <label> Category : </label>
-                        <input = "category"><br>
-                        <label> Due date : </label>
-                        <input name= "due_date" type="date"><br><br>
-                        <button> Create task </button>
-                    </form><br>
-                </section>
-                <section> 
-                    <h2>Task Lists</h2>
-                    <ul>
-                        <l>
-                            Title: Study database engine mechanics<br>
-                            Description: Examine index layouts comparing B-Trees against alternative hash mechanisms<br>
-                            Status: in_progress<br>
-                        </l><br><br>
-                        <l>
-                            Title: Take PostgreSQL diagnostic quiz<br>
-                            Description: Validate grasp of complex execution plans, joins, and inner schema tasks<br>
-                            Status: done<br>
-                        </l><br><br>
-                    </ul>
+                <main>
+                    <section> 
+                        <h2> Add Tasks </h2>
+                        <form>
+                            <label> Title : </label>
+                            <input name="title"><br>
+                            <label> Decription : </label>
+                            <input name="description"><br>
+                            <label> Status : </label>
+                            <input name="status" ><br>
+                            <label> Category : </label>
+                            <input = name="category"><br>
+                            <label> Due date : </label>
+                            <input name= "due_date" type="date"><br><br>
+                            <button> Create task </button>
+                        </form><br>
+                    </section>
+                    <section> 
+                        <h2>Task Lists</h2>
+                        <ul>
+                            <li>
+                                Title: Study database engine mechanics | 
+                                Description: Examine index layouts comparing B-Trees against alternative hash mechanisms | 
+                                Status: in_progress<br>
+                            </li><br><br>
+                            <li>
+                                Title: Take PostgreSQL diagnostic quiz |
+                                Description: Validate grasp of complex execution plans, joins, and inner schema tasks | 
+                                Status: done<br>
+                            </li><br><br>
+                        </ul>
                     
-                </section>
-            </main>
-
+                    </section>
+                </main>
+            </div>    
         </body>
     </html>
-
+    
