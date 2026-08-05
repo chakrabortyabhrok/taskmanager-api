@@ -7,9 +7,24 @@
 }
 
 button{
-    height: 60px;
+    height: 40px;
     width: 120px;
-    padding: 20px;
+    padding: 0px;
     border: 2px solid red;
     margin-left: 50px;
+}
+
+.test-body{
+    height: 100px;
+    width: 500px;
+    padding: 100px;
+    padding-top: 10px;
+    border: 50px rgb(92, 80, 250);
+}
+
+.test-body2{
+    height: 100px;
+    width: 500px;
+    padding-top: 100px;
+    border: 50px rgb(92, 80, 250);
 }
