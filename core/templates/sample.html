@@ -4,7 +4,7 @@
 <head> 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Task Manager Homepage</title> 
+    <title>Sample Link Homepage</title> 
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -12,31 +12,8 @@
 
     <!-- Header Banner -->
     <header class="bg-blue-600 py-6 shadow-md">
-        <h1 class="text-3xl font-bold text-white text-center tracking-wide">TASK MANAGER</h1>
+        <h1 class="text-3xl font-bold text-white text-center tracking-wide">LINK WORKS</h1>
     </header>
-
-    <nav class="sticky top-50 z-50 mb-6 bg-white border-b border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <a href="#" class="text-xl font-bold text-gray-900">
-                    Logo
-                </a>
-                <!-- 2. Nav Links -->
-                <div class="flex items-center space-x-6">
-                    <a href="#" class="text-gray-600 hover:text-gray-900 transition">Home</a>
-                    <a href="#" class="text-gray-600 hover:text-gray-900 transition">Features</a>
-                    <a href="#" class="text-gray-600 hover:text-gray-900 transition">Pricing</a>
-                </div>
-
-                <!-- 3. Call-to-Action Button -->
-                <div>
-                    <a href="{% url 'sample_page' %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
-                        Get Started
-                    </a>
-                </div>
-            </div>
-        </div>
-    </nav>
 
     <!-- Main Container -->
     <main class="max-w-3xl mx-auto px-4 pb-12 space-y-8">
@@ -76,36 +53,6 @@
                 </button>
             </form>
         </section>
-
-        <!-- Task List Section -->
-        <section class="space-y-4">
-            <h2 class="text-xl font-bold text-gray-800">Task List</h2>
-            
-            <ul class="space-y-4">
-                <!-- Task Card 1 -->
-                <li class="bg-white rounded-xl p-5 shadow-sm border border-gray-200 flex justify-between items-start">
-                    <div class="space-y-1">
-                        <h3 class="font-bold text-gray-900 text-lg">Study database engine mechanics</h3>
-                        <p class="text-gray-600 text-sm">Examine index layouts comparing B-Trees against alternative hash mechanisms</p>
-                    </div>
-                    <span class="bg-amber-100 text-amber-800 text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap">
-                        In Progress
-                    </span>
-                </li>
-
-                <!-- Task Card 2 -->
-                <li class="bg-white rounded-xl p-5 shadow-sm border border-gray-200 flex justify-between items-start">
-                    <div class="space-y-1">
-                        <h3 class="font-bold text-gray-900 text-lg">Take PostgreSQL diagnostic quiz</h3>
-                        <p class="text-gray-600 text-sm">Validate grasp of complex execution plans, joins, and inner schema tasks</p>
-                    </div>
-                    <span class="bg-emerald-100 text-emerald-800 text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap">
-                        Done
-                    </span>
-                </li>
-            </ul>
-        </section>
-
     </main>    
 </body>
 </html>
